@@ -1,0 +1,15 @@
+providerId: scaleway-serverless-containers
+displayName: Scaleway Serverless Containers
+region: fr-par
+runtimeVersion: 8.0.14
+startupPath: /api/startup
+computePath: /api/compute/matrix
+idleWindowMinutes: 15
+supportsDeterministicScaleToZeroConfirmation: true
+scaleToZeroEvidenceStrategy: Scaleway container instance metrics
+disabledWarmStartOptimizations:
+  - keep-warm
+resourceSettings:
+  cpu: "1"
+  memory: 1024Mi
+parityNotes: []

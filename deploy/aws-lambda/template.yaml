@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  BenchmarkFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: benchmark-app
+      Runtime: dotnet8
+      CodeUri: ../../src/BenchmarkApp.AwsLambdaHost/bin/Release/net8.0/publish/
+      Handler: BenchmarkApp.AwsLambdaHost
+      MemorySize: 1024
+      Timeout: 30
+      Architectures:
+        - x86_64
+      Events:
+        HttpApi:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY

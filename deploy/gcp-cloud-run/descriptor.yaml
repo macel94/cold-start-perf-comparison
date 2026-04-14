@@ -1,0 +1,15 @@
+providerId: gcp-cloud-run
+displayName: GCP Cloud Run
+region: europe-west1
+runtimeVersion: 8.0.14
+startupPath: /api/startup
+computePath: /api/compute/matrix
+idleWindowMinutes: 15
+supportsDeterministicScaleToZeroConfirmation: true
+scaleToZeroEvidenceStrategy: Cloud Run revision and instance metrics
+disabledWarmStartOptimizations:
+  - min-instances
+resourceSettings:
+  cpu: "1"
+  memory: 512Mi
+parityNotes: []

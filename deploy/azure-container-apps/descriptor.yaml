@@ -1,0 +1,15 @@
+providerId: azure-container-apps
+displayName: Azure Container Apps
+region: westeurope
+runtimeVersion: 8.0.14
+startupPath: /api/startup
+computePath: /api/compute/matrix
+idleWindowMinutes: 15
+supportsDeterministicScaleToZeroConfirmation: true
+scaleToZeroEvidenceStrategy: Container Apps replica metrics
+disabledWarmStartOptimizations:
+  - min-replicas
+resourceSettings:
+  cpu: "1.0"
+  memory: 2Gi
+parityNotes: []

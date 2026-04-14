@@ -2,14 +2,13 @@
 
 ## Purpose
 
-This quickstart is for the next implementation phase. The repository is still planning-first, so these steps focus on turning the approved spec and design artifacts into actionable engineering work without introducing source code yet.
+This quickstart is the operator-facing path for deploying one provider and running one benchmark session from repository artifacts alone.
 
 ## Inputs
 
-- Feature spec: `/specs/001-cross-cloud-benchmark/spec.md`
-- Implementation plan: `/specs/001-cross-cloud-benchmark/plan.md`
-- Research decisions: `/specs/001-cross-cloud-benchmark/research.md`
-- Data model: `/specs/001-cross-cloud-benchmark/data-model.md`
+- Root README: `/README.md`
+- Provider descriptors in `/deploy/*/descriptor.yaml`
+- Workload artifact: `/workloads/v1/cross-cloud-sequential.json`
 - Contracts:
   - `/specs/001-cross-cloud-benchmark/contracts/benchmark-app.openapi.yaml`
   - `/specs/001-cross-cloud-benchmark/contracts/workload.schema.json`
@@ -29,81 +28,79 @@ This quickstart is for the next implementation phase. The repository is still pl
 - Disable or leave unset warm-start optimizations such as Cloud Run min instances, Azure Container Apps minimum replicas, AWS provisioned concurrency, and equivalent Scaleway keep-warm settings.
 - Document benchmark resource and billing-affecting settings in each provider descriptor and deployment README.
 
-## Recommended Implementation Order
+## Single-provider benchmark flow
 
-1. **Generate tasks**
-   - Run `/speckit.tasks` for feature `001-cross-cloud-benchmark`.
-   - Keep the first task slice documentation-and-contract driven.
+1. **Restore, build, and test**
 
-2. **Scaffold repository structure**
-   - Create `src/`, `tests/`, `deploy/`, and `workloads/` exactly as defined in `plan.md`.
-   - Keep `BenchmarkApp` as the single source of endpoint behavior.
-   - Add only a thin `BenchmarkApp.AwsLambdaHost` shim for Lambda packaging.
+   ```bash
+   dotnet restore
+   dotnet build cold-start-perf-comparison.sln
+   dotnet test cold-start-perf-comparison.sln
+   ```
 
-3. **Lock contracts first**
-   - Treat the OpenAPI and JSON Schema files as the source of truth.
-   - Ensure endpoint paths stay exactly:
-     - `GET /api/startup`
-     - `POST /api/compute/matrix`
-    - Keep workload/result shapes backward-compatible with the approved v1 contracts.
-    - Enforce unique workload step IDs, contiguous sequence numbers, and the fixed two-entry payload catalog in the custom workload validator as well as in schema-level checks.
+2. **Choose a provider**
 
-4. **Create the first workload artifact**
-    - Add `workloads/v1/cross-cloud-sequential.json`.
-    - Include exactly two payload catalog entries: `matrix-100x100` and `matrix-200x200`.
-    - Encode the ordered cold/warm steps explicitly, including compute steps from the start; do not derive them dynamically.
+   Use exactly one of the canonical v1 targets:
 
-5. **Implement runner orchestration**
-   - Read the workload file.
-   - Execute steps in file order only.
-   - Before each cold step:
-     - wait 15 minutes,
-     - query provider-specific scale evidence where supported,
-     - attach a parity exception if zero-state cannot be confirmed.
+   - GCP Cloud Run: `deploy/gcp-cloud-run/`
+   - AWS Lambda: `deploy/aws-lambda/`
+   - Azure Container Apps: `deploy/azure-container-apps/`
+   - Scaleway Serverless Containers: `deploy/scaleway-serverless/`
 
-6. **Implement result normalization**
-   - Emit one run envelope matching `results.schema.json`.
-   - Record raw step results before computing summary metrics.
-   - Compute summary metrics per `(provider, intent)` slice only after all records are collected.
+3. **Keep warm-start optimization disabled**
 
-7. **Add validation**
-   - Contract tests: verify app responses and result payloads against the documented schemas.
-   - Integration tests: verify runner sequencing, idle-window handling, and parity-exception recording.
-   - Documentation smoke test: follow docs to configure one provider end-to-end.
+   - Cloud Run `minScale` must be `0`
+   - Azure `minReplicas` must be `0`
+   - AWS provisioned concurrency must remain disabled
+   - Scaleway keep-warm settings must remain disabled
 
-## Suggested Milestones
+4. **Deploy the benchmark app**
 
-### Milestone 1: Contracts and skeletons
+   Follow the provider README in the matching `deploy/` directory and keep:
 
-- Contracts reviewed and frozen
-- Repository structure scaffolded
-- Initial workload file added
-- Test projects created
+   - region fixed to the descriptor value
+   - runtime fixed to `8.0.14`
+   - startup path fixed to `GET /api/startup`
+   - compute path fixed to `POST /api/compute/matrix`
 
-### Milestone 2: Shared benchmark app + runner
+5. **Update the provider base URL**
 
-- Startup and compute endpoints implemented
-- Runner executes sequential workload locally
-- Result envelope generation implemented
+   Set the deployed provider URL in `src/BenchmarkRunner/appsettings.json` for the target provider or override via environment-managed config.
 
-### Milestone 3: Provider packaging
+6. **Run one benchmark session**
 
-- Benchmark metadata descriptors added for all four providers
-- Cloud Run container deployment path added
-- Azure Container Apps deployment path added
-- Scaleway Serverless Containers deployment path added
-- AWS Lambda host adapter added
+   ```bash
+   dotnet run --project src/BenchmarkRunner -- \
+     --workload workloads/v1/cross-cloud-sequential.json \
+     --providers gcp-cloud-run \
+     --output benchmark-results/gcp-single-run.json \
+     --network-location-label workstation-eu
+   ```
 
-### Milestone 4: Benchmark reproducibility
+7. **Validate the result envelope**
 
-- Provider configuration docs written
-- One-region-per-provider values documented exactly as GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, Scaleway=`fr-par`
-- Reproducible run captured with summary metrics and parity annotations
+   Confirm the output JSON contains:
 
-## Definition of Done for the first implementation slice
+   - `workloadVersion`
+   - `workloadFileHash`
+   - `apiContractVersion`
+   - `resultSchemaVersion`
+   - `records`
+   - `parityExceptions`
+   - `summaryMetrics`
 
-- Source layout matches `plan.md`.
-- Contracts are unchanged or intentionally versioned.
-- One workload file exists and validates.
-- Runner design still enforces sequential execution and the uniform 15-minute cold-step idle window.
-- No extra providers, payload sizes, or concurrency modes are introduced.
+8. **Check cold-step parity**
+
+   For every `intent: cold` record:
+
+   - `scaleToZeroConfirmed` must exist
+   - if it is `false`, `annotationRefs` must reference a parity exception
+   - AWS Lambda is expected to produce a parity exception in v1
+
+## Expected output checklist
+
+- Source layout matches `plan.md`
+- One workload file exists and validates
+- Runner executes steps sequentially only
+- Summary metrics include `p50`, `p95`, `p99`, `min`, and `max`
+- Provider parity caveats are explicit in docs and results
