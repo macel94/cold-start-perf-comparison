@@ -1,0 +1,194 @@
+openapi: 3.1.0
+info:
+  title: Cross-Cloud Benchmark App API
+  version: 1.0.0
+  description: >
+    Shared HTTP contract for the single .NET benchmark app deployed to GCP Cloud Run,
+    AWS Lambda-hosted ASP.NET, Azure Container Apps, and Scaleway Serverless Containers.
+servers:
+  - url: https://{baseUrl}
+    variables:
+      baseUrl:
+        default: example.invalid
+paths:
+  /api/startup:
+    get:
+      operationId: getStartupProbe
+      summary: Cold-start probe endpoint
+      description: Minimal readiness endpoint used for cold-start measurement.
+      responses:
+        '200':
+          description: Startup probe completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartupProbeResponse'
+        default:
+          description: Unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/compute/matrix:
+    post:
+      operationId: postMatrixCompute
+      summary: Warm compute probe endpoint
+      description: Executes fixed-size matrix multiplication for benchmark payloads.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatrixComputeRequest'
+      responses:
+        '200':
+          description: Matrix multiplication completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatrixComputeResponse'
+        '400':
+          description: Payload validation failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: Payload too large for the configured benchmark contract.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: Unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    StartupProbeResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          const: ready
+    MatrixComputeRequest:
+      oneOf:
+        - $ref: '#/components/schemas/MatrixComputeRequest100'
+        - $ref: '#/components/schemas/MatrixComputeRequest200'
+    MatrixComputeResponse:
+      oneOf:
+        - $ref: '#/components/schemas/MatrixComputeResponse100'
+        - $ref: '#/components/schemas/MatrixComputeResponse200'
+    MatrixComputeRequest100:
+      type: object
+      additionalProperties: false
+      required:
+        - payloadId
+        - dimension
+        - leftMatrix
+        - rightMatrix
+      properties:
+        payloadId:
+          type: string
+          const: matrix-100x100
+        dimension:
+          type: integer
+          const: 100
+        leftMatrix:
+          $ref: '#/components/schemas/Matrix100'
+        rightMatrix:
+          $ref: '#/components/schemas/Matrix100'
+    MatrixComputeRequest200:
+      type: object
+      additionalProperties: false
+      required:
+        - payloadId
+        - dimension
+        - leftMatrix
+        - rightMatrix
+      properties:
+        payloadId:
+          type: string
+          const: matrix-200x200
+        dimension:
+          type: integer
+          const: 200
+        leftMatrix:
+          $ref: '#/components/schemas/Matrix200'
+        rightMatrix:
+          $ref: '#/components/schemas/Matrix200'
+    MatrixComputeResponse100:
+      type: object
+      additionalProperties: false
+      required:
+        - payloadId
+        - dimension
+        - resultMatrix
+      properties:
+        payloadId:
+          type: string
+          const: matrix-100x100
+        dimension:
+          type: integer
+          const: 100
+        resultMatrix:
+          $ref: '#/components/schemas/Matrix100'
+    MatrixComputeResponse200:
+      type: object
+      additionalProperties: false
+      required:
+        - payloadId
+        - dimension
+        - resultMatrix
+      properties:
+        payloadId:
+          type: string
+          const: matrix-200x200
+        dimension:
+          type: integer
+          const: 200
+        resultMatrix:
+          $ref: '#/components/schemas/Matrix200'
+    NumericMatrix:
+      type: array
+      minItems: 1
+      items:
+        type: array
+        minItems: 1
+        items:
+          type: number
+    Matrix100:
+      type: array
+      minItems: 100
+      maxItems: 100
+      items:
+        type: array
+        minItems: 100
+        maxItems: 100
+        items:
+          type: number
+    Matrix200:
+      type: array
+      minItems: 200
+      maxItems: 200
+      items:
+        type: array
+        minItems: 200
+        maxItems: 200
+        items:
+          type: number
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      required:
+        - error
+      properties:
+        error:
+          type: string
+        detail:
+          type: string

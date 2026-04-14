@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/specs/001-cross-cloud-benchmark/contracts/workload.schema.json",
+  "title": "CrossCloudBenchmarkWorkload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workloadVersion",
+    "description",
+    "payloadCatalog",
+    "steps"
+  ],
+  "properties": {
+    "workloadVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payloadCatalog": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "$ref": "#/$defs/payloadDefinition"
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/workloadStep"
+      }
+    }
+  },
+  "$defs": {
+    "payloadDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payloadId",
+        "dimension",
+        "leftMatrix",
+        "rightMatrix",
+        "contentHash"
+      ],
+      "properties": {
+        "payloadId": {
+          "type": "string",
+          "enum": [
+            "matrix-100x100",
+            "matrix-200x200"
+          ]
+        },
+        "dimension": {
+          "type": "integer",
+          "enum": [
+            100,
+            200
+          ]
+        },
+        "leftMatrix": {
+          "$ref": "#/$defs/numericMatrix"
+        },
+        "rightMatrix": {
+          "$ref": "#/$defs/numericMatrix"
+        },
+        "contentHash": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "workloadStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stepId",
+        "sequence",
+        "intent",
+        "endpoint",
+        "method",
+        "expectedStatus"
+      ],
+      "properties": {
+        "stepId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "intent": {
+          "type": "string",
+          "enum": [
+            "cold",
+            "warm"
+          ]
+        },
+        "endpoint": {
+          "type": "string",
+          "enum": [
+            "startup",
+            "compute"
+          ]
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "GET",
+            "POST"
+          ]
+        },
+        "payloadRef": {
+          "type": "string",
+          "enum": [
+            "matrix-100x100",
+            "matrix-200x200"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "expectedStatus": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "startup"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "method": {
+                "const": "GET"
+              }
+            },
+            "not": {
+              "required": [
+                "payloadRef"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "payloadRef"
+            ],
+            "properties": {
+              "method": {
+                "const": "POST"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "numericMatrix": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}
