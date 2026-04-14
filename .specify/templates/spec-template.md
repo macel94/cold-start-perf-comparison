@@ -95,6 +95,18 @@
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
 - **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
+### Contract, Comparability & Caveats *(mandatory when APIs, schemas, benchmarks, or multi-target behavior are involved)*
+
+- **CC-001**: Shared contract surface: [OpenAPI files, schema files, workload
+  files, or N/A]
+- **CC-002**: Versioned or pinned inputs: [runtime, SDK, workload version and
+  hash, schema versions, canonical environments, or N/A]
+- **CC-003**: Comparability constraints that MUST stay identical across targets:
+  [endpoint paths, payloads, execution mode, measurement point, summary
+  metrics, or N/A]
+- **CC-004**: Known parity exceptions or benchmark caveats: [None identified]
+  or [explicit list with impact on interpretation]
+
 ### Key Entities *(include if feature involves data)*
 
 - **[Entity 1]**: [What it represents, key attributes without implementation]
@@ -113,6 +125,9 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+- **SC-005**: [Reproducibility or comparability metric, e.g., "A reviewer can
+  rerun the same versioned inputs and obtain output that matches the published
+  schema without undocumented steps"]
 
 ## Assumptions
 

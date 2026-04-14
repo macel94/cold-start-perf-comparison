@@ -16,19 +16,24 @@ Deliver a planning-first foundation for a reproducible v1 benchmark that compare
 **Target Platform**: Linux-based .NET workloads deployed to Cloud Run (`europe-west1`), AWS Lambda HTTP endpoint (`eu-west-1`), Azure Container Apps (`westeurope`), and Scaleway Serverless Containers (`fr-par`); single operator-run CLI from a stable workstation/runner host  
 **Project Type**: CLI + web-service benchmark harness with deployment configuration and documentation  
 **Performance Goals**: Capture reproducible end-to-end latency for cold and warm intents across all four providers; emit per-provider/per-intent p50/p95/p99/min/max summaries and correctness outcomes for each step  
-**Constraints**: Exactly four providers; one benchmark app contract; one workload file version per session; sequential execution only; 15-minute uniform idle window before every cold step; payload catalog fixed to 100x100 and 200x200 matrices; identical URL path structure; no auth in v1; parity exceptions recorded instead of failing the run; runtime/toolchain pinned to ASP.NET Core `8.0.14` and SDK `8.0.408`; regions fixed to `europe-west1`, `eu-west-1`, `westeurope`, and `fr-par`  
+**Constraints**: Exactly four providers; one benchmark app contract; one workload file version per session; explicit benchmark app contract and result schema versions recorded in run metadata; sequential execution only; 15-minute uniform idle window before every cold step; payload catalog fixed to 100x100 and 200x200 matrices; identical URL path structure; no auth in v1; parity exceptions recorded instead of failing the run; runtime/toolchain pinned to ASP.NET Core `8.0.14` and SDK `8.0.408`; regions fixed to `europe-west1`, `eu-west-1`, `westeurope`, and `fr-par`  
 **Scale/Scope**: Planning-first repository; initial deliverables are design artifacts, contracts, and repository structure for one shared app, one AWS-specific host shim, one runner, fixed deployment descriptors, and test scaffolding
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-The current constitution file is still the default placeholder template and does not define enforceable project-specific principles, gates, or prohibitions yet.
+The constitution is ratified at `.specify/memory/constitution.md` version `1.0.0` and defines five enforceable principles: cross-cloud fairness, reproducibility and explicit versioning, contract-first development, transparency of parity exceptions, and minimal v1 scope.
 
 ### Pre-Phase-0 Gate Result
 
 - **Status**: PASS
-- **Reason**: No actionable constitutional constraints are defined beyond the requirement to document and justify the work.
+- **Reason**:
+  - The plan preserves one shared benchmark app, one shared runner, one ordered workload definition, one measurement point at the runner, one 15-minute cold-step idle window, and one canonical region per provider.
+  - Runtime/toolchain pins, workload/version pins, and canonical provider regions are explicitly documented.
+  - Contracts are defined before implementation in OpenAPI and JSON Schema artifacts.
+  - Provider-specific behavior is limited to packaging/evidence collection and is documented as parity metadata instead of benchmark-semantic drift.
+  - Scope remains within the approved v1 boundaries of four providers, two payload sizes, sequential execution, and no auth.
 - **Planning guardrails applied anyway**:
   - Keep scope tightly aligned with the approved spec.
   - Prefer the smallest viable structure because the repository is nearly empty.
@@ -38,7 +43,7 @@ The current constitution file is still the default placeholder template and does
 ### Post-Phase-1 Re-Check
 
 - **Status**: PASS
-- **Reason**: Design artifacts stay within the spec-bounded v1 scope and do not introduce extra providers, concurrency modes, or unnecessary services.
+- **Reason**: Design artifacts stay within the constitution and spec-bounded v1 scope, keep contracts ahead of implementation, preserve reproducibility pins, and route platform differences into transparent parity annotations instead of divergent benchmark behavior.
 
 ## Project Structure
 

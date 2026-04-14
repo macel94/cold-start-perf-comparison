@@ -67,6 +67,36 @@
       "minItems": 1,
       "uniqueItems": true,
       "description": "Custom validation must enforce unique stepId values and contiguous sequence numbering starting at 1.",
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "const": "cold"
+              }
+            },
+            "required": [
+              "intent"
+            ]
+          },
+          "minContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "const": "warm"
+              }
+            },
+            "required": [
+              "intent"
+            ]
+          },
+          "minContains": 1
+        }
+      ],
       "items": {
         "$ref": "#/$defs/workloadStep"
       }
@@ -199,6 +229,52 @@
         }
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "cold"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "endpoint": {
+                "const": "startup"
+              },
+              "method": {
+                "const": "GET"
+              }
+            },
+            "not": {
+              "required": [
+                "payloadRef"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "warm"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "payloadRef"
+            ],
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              },
+              "method": {
+                "const": "POST"
+              }
+            }
+          }
+        },
         {
           "if": {
             "properties": {

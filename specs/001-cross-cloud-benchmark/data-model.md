@@ -56,7 +56,7 @@ Represents the versioned ordered workload file used by the runner.
 |------|------|----------|------|
 | `workloadVersion` | string | yes | Semantic or date-based version identifier |
 | `description` | string | yes | Human-readable description |
-| `payloadCatalog` | array[PayloadDefinition] | yes | Fixed catalog shared across all steps and containing exactly `matrix-100x100` then `matrix-200x200` in v1 |
+| `payloadCatalog` | array[PayloadDefinition] | yes | Fixed catalog shared across all steps and containing exactly `matrix-100x100` and `matrix-200x200` in v1 |
 | `steps` | array[WorkloadStep] | yes | Ordered execution list |
 
 **Validation rules**
@@ -85,6 +85,8 @@ Represents one ordered request instruction in the workload.
 - `sequence` values must be contiguous and unique.
 - `startup` steps cannot include `payloadRef`.
 - `compute` steps must include a valid `payloadRef`.
+- `intent: cold` steps must target `endpoint: startup`.
+- `intent: warm` steps must target `endpoint: compute`.
 - `intent: cold` steps must be preceded by idle enforcement in execution, not in file structure alone.
 
 ### 5. BenchmarkRun
@@ -98,6 +100,8 @@ Represents one session execution of the workload against one or more providers.
 | `completedAtUtc` | string (date-time) | no | Run completion timestamp |
 | `workloadVersion` | string | yes | Copied from workload file |
 | `workloadFileHash` | string | yes | Used to prove identical workload usage |
+| `apiContractVersion` | string | yes | Version of the benchmark app OpenAPI contract used for the run |
+| `resultSchemaVersion` | string | yes | Version identifier for the normalized results schema |
 | `providers` | array[string] | yes | Subset or full set of fixed providers |
 | `runnerVersion` | string | yes | Version of the benchmark runner |
 | `networkLocationLabel` | string | no | Stable runner location identifier |
@@ -124,7 +128,7 @@ Represents one measured outcome for one step against one provider.
 | `latencyMs` | number | yes | End-to-end wall-clock latency at runner |
 | `httpStatus` | integer | yes | HTTP response status |
 | `correctness` | string | yes | Enum: `not-applicable`, `passed`, `failed` |
-| `responseBody` | object | no | Normalized response payload capture |
+| `responseBody` | object | conditional | Required for `endpoint: compute`; contains the normalized matrix result payload |
 | `errorType` | string | no | Timeout, HTTP error, schema mismatch, etc. |
 | `errorDetail` | string | no | Human-readable failure detail |
 | `scaleToZeroConfirmed` | boolean | conditional | Required for `intent: cold`; omitted for `intent: warm` |
@@ -133,9 +137,10 @@ Represents one measured outcome for one step against one provider.
 **Validation rules**
 - `latencyMs` must be non-negative.
 - Startup records should use `correctness: not-applicable`.
-- Compute records must set `correctness` based on matrix result validation.
+- Compute records must set `correctness` based on matrix result validation and include the actual matrix output in `responseBody`.
 - `scaleToZeroConfirmed` is required for cold steps and may be `false` when paired with a parity exception.
 - Warm-step records omit `scaleToZeroConfirmed`.
+- A cold-step record with `scaleToZeroConfirmed: false` must link to at least one parity exception through `annotationRefs`.
 
 ### 7. ParityException
 

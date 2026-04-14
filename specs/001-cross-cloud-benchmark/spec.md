@@ -2,7 +2,7 @@
 
 **Feature Branch**: `001-cross-cloud-benchmark`  
 **Created**: 2026-04-14  
-**Status**: Draft  
+**Status**: Approved  
 **Input**: User description: "Implement planning artifacts for a .NET Web API cold-start performance comparison benchmark across GCP Cloud Run, AWS Lambda, Azure Container Apps, and a European provider (Scaleway preferred)."
 
 ## Clarifications
@@ -55,7 +55,7 @@ A benchmark operator wants to run a fixed-payload compute probe (matrix multipli
 
 **Why this priority**: The compute probe is the secondary measurement track and is only meaningful after cold-start behaviour is validated. It provides context for interpreting cold-start overhead relative to total compute cost.
 
-**Independent Test**: Can be tested independently by sending a fixed-payload POST request to a single provider's compute endpoint and verifying the response matches the expected result shape within an acceptable latency range.
+**Independent Test**: Can be tested independently by sending a fixed-payload POST request to a single provider's compute endpoint and verifying the response matches the expected result shape, matrix output, and result-record fields without stopping the run on malformed payload errors.
 
 **Acceptance Scenarios**:
 
@@ -125,7 +125,7 @@ A third-party reviewer wants to independently reproduce the benchmark by followi
 
 - **FR-017**: Every result record MUST include: provider identifier, region, step ID, end-to-end latency (measured at the runner), HTTP status code, and cold/warm intent.
 - **FR-018**: The result schema MUST be identical across all four providers; provider-specific fields are not permitted in the normalised schema (they may appear in a separate annotations block).
-- **FR-019**: The benchmark run MUST produce a run metadata record that includes: run ID, timestamp, workload file version, and the list of providers included in the run.
+- **FR-019**: The benchmark run MUST produce a run metadata record that includes: run ID, timestamp, workload file version, benchmark app contract version, result schema version, and the list of providers included in the run.
 - **FR-020**: Matrix computation results (actual output values) MUST be captured in the result record to allow correctness verification separate from latency measurement.
 
 **Fairness Constraints**

@@ -9,6 +9,8 @@
     "startedAtUtc",
     "workloadVersion",
     "workloadFileHash",
+    "apiContractVersion",
+    "resultSchemaVersion",
     "providers",
     "runnerVersion",
     "records",
@@ -34,6 +36,14 @@
       "minLength": 1
     },
     "workloadFileHash": {
+      "type": "string",
+      "minLength": 1
+    },
+    "apiContractVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "resultSchemaVersion": {
       "type": "string",
       "minLength": 1
     },
@@ -168,7 +178,14 @@
           ]
         },
         "responseBody": {
-          "type": "object"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/matrixComputeResponse100"
+            },
+            {
+              "$ref": "#/$defs/matrixComputeResponse200"
+            }
+          ]
         },
         "errorType": {
           "type": "string"
@@ -198,7 +215,128 @@
           "then": {
             "required": [
               "scaleToZeroConfirmed"
+            ],
+            "properties": {
+              "endpoint": {
+                "const": "startup"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "warm"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "warm"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "scaleToZeroConfirmed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "responseBody"
             ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "startup"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "correctness": {
+                "const": "not-applicable"
+              }
+            },
+            "not": {
+              "required": [
+                "responseBody"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "correctness": {
+                "enum": [
+                  "passed",
+                  "failed"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "cold"
+              },
+              "scaleToZeroConfirmed": {
+                "const": false
+              }
+            },
+            "required": [
+              "intent",
+              "scaleToZeroConfirmed"
+            ]
+          },
+          "then": {
+            "required": [
+              "annotationRefs"
+            ],
+            "properties": {
+              "annotationRefs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       ]
@@ -321,6 +459,72 @@
         "parityExceptionCount": {
           "type": "integer",
           "minimum": 0
+        }
+      }
+    },
+    "matrix100": {
+      "type": "array",
+      "minItems": 100,
+      "maxItems": 100,
+      "items": {
+        "type": "array",
+        "minItems": 100,
+        "maxItems": 100,
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "matrix200": {
+      "type": "array",
+      "minItems": 200,
+      "maxItems": 200,
+      "items": {
+        "type": "array",
+        "minItems": 200,
+        "maxItems": 200,
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "matrixComputeResponse100": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payloadId",
+        "dimension",
+        "resultMatrix"
+      ],
+      "properties": {
+        "payloadId": {
+          "const": "matrix-100x100"
+        },
+        "dimension": {
+          "const": 100
+        },
+        "resultMatrix": {
+          "$ref": "#/$defs/matrix100"
+        }
+      }
+    },
+    "matrixComputeResponse200": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payloadId",
+        "dimension",
+        "resultMatrix"
+      ],
+      "properties": {
+        "payloadId": {
+          "const": "matrix-200x200"
+        },
+        "dimension": {
+          "const": 200
+        },
+        "resultMatrix": {
+          "$ref": "#/$defs/matrix200"
         }
       }
     }

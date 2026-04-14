@@ -68,13 +68,13 @@
 ### Tests for User Story 1
 
 - [ ] T010 [P] [US1] Add API contract tests for `GET /api/startup` and `POST /api/compute/matrix` against `specs/001-cross-cloud-benchmark/contracts/benchmark-app.openapi.yaml` in `tests/contract/Benchmark.ContractTests/BenchmarkAppOpenApiContractTests.cs`
-- [ ] T011 [P] [US1] Add workload and results schema contract tests for `workloads/v1/cross-cloud-sequential.json`, `specs/001-cross-cloud-benchmark/contracts/workload.schema.json`, and `specs/001-cross-cloud-benchmark/contracts/results.schema.json` in `tests/contract/Benchmark.ContractTests/BenchmarkSchemasContractTests.cs`
+- [ ] T011 [P] [US1] Add workload and results schema contract tests for `workloads/v1/cross-cloud-sequential.json`, `specs/001-cross-cloud-benchmark/contracts/workload.schema.json`, and `specs/001-cross-cloud-benchmark/contracts/results.schema.json` in `tests/contract/Benchmark.ContractTests/BenchmarkSchemasContractTests.cs`, including assertions for at least one cold step and one warm step
 - [ ] T012 [P] [US1] Add sequential runner integration coverage for ordered step execution and record emission in `tests/integration/Benchmark.IntegrationTests/SequentialWorkloadExecutorIntegrationTests.cs`
 
 ### Implementation for User Story 1
 
 - [ ] T013 [US1] Implement the shared benchmark host and startup probe route in `src/BenchmarkApp/Program.cs` and `src/BenchmarkApp/Endpoints/StartupEndpoint.cs`
-- [ ] T014 [P] [US1] Implement run metadata and raw result-envelope assembly in `src/BenchmarkRunner/Program.cs` and `src/BenchmarkRunner/Services/RunEnvelopeBuilder.cs`
+- [ ] T014 [P] [US1] Implement run metadata and raw result-envelope assembly in `src/BenchmarkRunner/Program.cs` and `src/BenchmarkRunner/Services/RunEnvelopeBuilder.cs`, including workload version, benchmark app contract version, and result schema version capture
 - [ ] T015 [P] [US1] Add workload loading and workload hash capture in `src/BenchmarkRunner/Services/WorkloadFileLoader.cs` and `src/BenchmarkRunner/Services/WorkloadHashService.cs`
 - [ ] T016 [US1] Author the schema-valid sequential v1 workload artifact with the fixed two-entry payload catalog and explicit cold/warm step order in `workloads/v1/cross-cloud-sequential.json`
 - [ ] T017 [US1] Implement single-request sequential dispatch with shared path targeting in `src/BenchmarkRunner/Services/SequentialWorkloadExecutor.cs`
@@ -100,7 +100,7 @@
 - [ ] T021 [US2] Implement the fixed v1 cold-step idle coordinator in `src/BenchmarkRunner/Services/ColdStartIdleWindowCoordinator.cs`
 - [ ] T022 [P] [US2] Implement provider zero-state evidence services in `src/BenchmarkRunner/Services/ScaleEvidence/IProviderScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/CloudRunScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/AzureContainerAppsScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/ScalewayScaleEvidenceService.cs`, and `src/BenchmarkRunner/Services/ScaleEvidence/AwsLambdaScaleEvidenceService.cs`
 - [ ] T023 [US2] Integrate cold-step confirmation and parity exception recording into `src/BenchmarkRunner/Services/SequentialWorkloadExecutor.cs` and `src/BenchmarkRunner/Services/ParityExceptionRecorder.cs`
-- [ ] T024 [US2] Capture per-provider cold-start policy metadata and canonical regions in `deploy/gcp-cloud-run/descriptor.yaml`, `deploy/aws-lambda/descriptor.yaml`, `deploy/azure-container-apps/descriptor.yaml`, and `deploy/scaleway-serverless/descriptor.yaml` using GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, and Scaleway=`fr-par`
+- [ ] T024 [US2] Capture per-provider cold-start policy metadata, canonical regions, disabled warm-start optimizations, and benchmark resource settings in `deploy/gcp-cloud-run/descriptor.yaml`, `deploy/aws-lambda/descriptor.yaml`, `deploy/azure-container-apps/descriptor.yaml`, and `deploy/scaleway-serverless/descriptor.yaml` using GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, and Scaleway=`fr-par`
 
 **Checkpoint**: User Story 2 makes cold-start intent trustworthy and transparent even when a platform cannot expose deterministic scale-to-zero evidence.
 
@@ -121,7 +121,7 @@
 
 - [ ] T027 [US3] Implement the compute endpoint and matrix multiplication service in `src/BenchmarkApp/Endpoints/MatrixComputeEndpoint.cs` and `src/BenchmarkApp/Services/MatrixComputeService.cs`
 - [ ] T028 [P] [US3] Implement fixed-payload request validation and response DTO mapping in `src/BenchmarkApp/Validation/MatrixComputeRequestValidator.cs` and `src/BenchmarkApp/Models/MatrixComputeContracts.cs`
-- [ ] T029 [US3] Finalize deterministic matrix contents and content hashes in the existing `workloads/v1/cross-cloud-sequential.json` payload catalog for `matrix-100x100` and `matrix-200x200`
+- [ ] T029 [US3] Finalize deterministic matrix contents and content hashes in the existing `workloads/v1/cross-cloud-sequential.json` payload catalog for `matrix-100x100` and `matrix-200x200`, then re-run the contract/schema validation from `T011`
 - [ ] T030 [US3] Implement warm-step compute execution and correctness verification in `src/BenchmarkRunner/Services/ComputeStepExecutor.cs` and `src/BenchmarkRunner/Services/MatrixResultVerifier.cs`
 - [ ] T031 [US3] Compute per-provider and per-intent `p50`, `p95`, `p99`, `min`, and `max` summaries in `src/BenchmarkRunner/Services/SummaryMetricCalculator.cs` and `src/BenchmarkRunner/Services/RunEnvelopeBuilder.cs`
 - [ ] T032 [US3] Capture compute response bodies, correctness state, and non-fatal error continuation rules in `src/BenchmarkRunner/Services/ResultRecordFactory.cs` and `src/BenchmarkRunner/Services/RunFailurePolicy.cs`
@@ -146,7 +146,7 @@
 - [ ] T035 [US4] Add the thin AWS Lambda host shim over the shared app in `src/BenchmarkApp.AwsLambdaHost/Program.cs` and `src/BenchmarkApp.AwsLambdaHost/LambdaEntryPoint.cs`
 - [ ] T036 [P] [US4] Create GCP Cloud Run and Azure Container Apps native deployment manifests plus operator notes alongside the benchmark descriptors in `deploy/gcp-cloud-run/service.yaml`, `deploy/gcp-cloud-run/README.md`, `deploy/azure-container-apps/containerapp.yaml`, and `deploy/azure-container-apps/README.md`
 - [ ] T037 [P] [US4] Create AWS Lambda and Scaleway native deployment manifests plus operator notes alongside the benchmark descriptors in `deploy/aws-lambda/template.yaml`, `deploy/aws-lambda/README.md`, `deploy/scaleway-serverless/container.yaml`, and `deploy/scaleway-serverless/README.md`
-- [ ] T038 [US4] Document the canonical provider regions, runtime/toolchain pin (`8.0.14` / `8.0.408`), deployment steps, and end-to-end run instructions in `README.md` and `specs/001-cross-cloud-benchmark/quickstart.md`
+- [ ] T038 [US4] Document the canonical provider regions, runtime/toolchain pin (`8.0.14` / `8.0.408`), disabled warm-start optimizations, resource settings, deployment steps, and end-to-end run instructions in `README.md` and `specs/001-cross-cloud-benchmark/quickstart.md`
 
 **Checkpoint**: User Story 4 makes the benchmark reproducible from repository documentation and deployment assets alone.
 
@@ -158,7 +158,7 @@
 
 - [ ] T039 [P] Update benchmark configuration examples and output-path guidance in `src/BenchmarkRunner/appsettings.json` and `README.md`
 - [ ] T040 [P] Add final cross-project test wiring and execution guidance in `tests/contract/Benchmark.ContractTests/Benchmark.ContractTests.csproj`, `tests/integration/Benchmark.IntegrationTests/Benchmark.IntegrationTests.csproj`, `tests/unit/Benchmark.UnitTests/Benchmark.UnitTests.csproj`, and `README.md`
-- [ ] T041 Validate v1 guardrail and parity-caveat language in `README.md`, `deploy/gcp-cloud-run/README.md`, `deploy/aws-lambda/README.md`, `deploy/azure-container-apps/README.md`, and `deploy/scaleway-serverless/README.md`
+- [ ] T041 Validate v1 guardrail, parity-caveat, warm-start-disablement, and resource-setting language in `README.md`, `deploy/gcp-cloud-run/README.md`, `deploy/aws-lambda/README.md`, `deploy/azure-container-apps/README.md`, and `deploy/scaleway-serverless/README.md`
 
 ---
 
@@ -180,6 +180,7 @@
 - **US2 (P2)**: Extends US1 with cold-start enforcement and parity annotation
 - **US3 (P3)**: Extends US1 with compute workload execution and depends on US2’s cold-step runner flow for complete benchmark parity
 - **US4 (P4)**: Documents and packages the system after US1-US3 behavior is available
+- **Task extension note**: `T031` extends `src/BenchmarkRunner/Services/RunEnvelopeBuilder.cs`, which is first created in `T014`
 
 ### Within Each User Story
 
@@ -264,3 +265,4 @@ Task: "T037 [US4] Create AWS Lambda and Scaleway deployment descriptors in deplo
 - The task list intentionally keeps the sequential v1 rules explicit in both workload and runner tasks
 - Provider descriptor tasks are separated from native deployment-manifest tasks so cold-start evidence policy and deployment packaging stay traceable
 - The repository is currently minimal, so scaffolding tasks are included instead of assuming an existing .NET solution
+- Finish implementation with a publishability check confirming the output envelope includes raw records, run metadata, parity annotations, and p50/p95/p99/min/max summaries before sharing benchmark results
