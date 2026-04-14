@@ -15,8 +15,8 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
-  > **3 unresolved markers** in FR-022, FR-023, FR-024. These cover idle window duration, matrix payload dimensions, and required summary statistics. All three are explicitly flagged as open decisions in the feature request. Marked for resolution via `/speckit.clarify` before planning.
+- [x] No clarification markers remain
+  > Resolved in spec: FR-022 fixes a uniform 15-minute idle window for all providers in v1; FR-023 fixes matrix payloads at 100×100 and 200×200; FR-024 requires p50, p95, p99, min, and max summary metrics.
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -38,9 +38,6 @@
 
 ## Notes
 
-- **3 [NEEDS CLARIFICATION] markers remain** (FR-022, FR-023, FR-024). These are the three highest-impact open decisions identified in the feature request. They must be resolved before the spec can be marked fully complete and before `/speckit.plan` is run.
-  - **FR-022**: Idle window duration per provider (scope/measurement-accuracy impact)
-  - **FR-023**: Matrix payload dimensions and byte limits (cross-provider comparability impact)
-  - **FR-024**: Required summary statistics in result set (output completeness impact)
-- All other checklist items pass. The spec is ready for clarification (`/speckit.clarify`) and then planning (`/speckit.plan`).
-- Validation iteration: **1 of 3** — all items except the [NEEDS CLARIFICATION] markers pass on first iteration.
+- The prior clarification markers in FR-022, FR-023, and FR-024 have been resolved directly in the spec.
+- All checklist items now pass. The spec is ready for planning (`/speckit.plan`).
+- Validation iteration: **2 of 3** — previously open clarification items resolved.

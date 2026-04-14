@@ -5,6 +5,14 @@
 **Status**: Draft  
 **Input**: User description: "Implement planning artifacts for a .NET Web API cold-start performance comparison benchmark across GCP Cloud Run, AWS Lambda, Azure Container Apps, and a European provider (Scaleway preferred)."
 
+## Clarifications
+
+### Session 2026-04-14
+
+- Q: What idle window duration should be used before firing cold-start probes in v1? → A: 15 minutes, identical for all providers in v1.
+- Q: What fixed matrix payload dimensions should the payload catalog define in v1? → A: 100×100 and 200×200.
+- Q: Which summary metrics must the benchmark output include? → A: p50, p95, p99, min, and max.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 — Run a Reproducible Cross-Provider Cold-Start Benchmark (Priority: P1)
@@ -30,11 +38,11 @@ A benchmark analyst wants to be certain that the cold-start probe steps genuinel
 
 **Why this priority**: Cold-start measurement is the primary differentiating metric. Inaccurate cold-start capture renders the entire comparison meaningless. This must be addressed before any results are published.
 
-**Independent Test**: Can be tested independently by verifying that, for a single provider, a configurable idle window elapses and a provider reset signal (teardown/scale-to-zero confirmation) is observed before the cold-start probe request is sent, and the result is labelled `cold`.
+**Independent Test**: Can be tested independently by verifying that, for a single provider, the 15-minute idle window elapses and a provider reset signal (teardown/scale-to-zero confirmation) is observed before the cold-start probe request is sent, and the result is labelled `cold`.
 
 **Acceptance Scenarios**:
 
-1. **Given** an idle window duration is configured for a provider, **When** the idle window expires after the last request, **Then** the provider's compute instance is confirmed to have scaled to zero or been discarded before the cold-start probe is fired.
+1. **Given** a uniform 15-minute idle window is configured for v1, **When** that idle window expires after the last request, **Then** the provider's compute instance is confirmed to have scaled to zero or been discarded before the cold-start probe is fired.
 2. **Given** a cold-start probe request is sent, **When** the response is received, **Then** the result record carries `intent: cold` and the measured latency includes the full initialisation time.
 3. **Given** provider documentation states a scale-to-zero behaviour that differs from the standard idle window, **When** the benchmark is run, **Then** that provider-specific caveat and any parity exception are recorded alongside its result set.
 4. **Given** a provider does not support true scale-to-zero, **When** a cold-start run is attempted, **Then** the step is marked with a parity exception and the results note explains the deviation.
@@ -52,7 +60,7 @@ A benchmark operator wants to run a fixed-payload compute probe (matrix multipli
 **Acceptance Scenarios**:
 
 1. **Given** the benchmark runner sends a compute-probe step with a fixed matrix payload, **When** the provider responds, **Then** the result record carries `intent: warm`, the step ID, provider, region, latency, and status.
-2. **Given** the same matrix dimensions and payload are used across all providers, **When** results are collected, **Then** compute-probe latency figures are directly comparable without normalisation.
+2. **Given** the same 100×100 and 200×200 matrix payloads are used across all providers, **When** results are collected, **Then** compute-probe latency figures are directly comparable without normalisation.
 3. **Given** a provider's compute endpoint receives a malformed or oversized payload, **When** the request is processed, **Then** the result is recorded as an error step with status and error detail, and the benchmark run continues.
 
 ---
@@ -108,7 +116,7 @@ A third-party reviewer wants to independently reproduce the benchmark by followi
 
 **Cold-Start Measurement**
 
-- **FR-013**: Before any workload step marked `intent: cold`, the benchmark runner MUST enforce an idle window to allow the provider to scale to zero; the idle window duration MUST be explicitly configured and documented per provider.
+- **FR-013**: Before any workload step marked `intent: cold`, the benchmark runner MUST enforce a 15-minute idle window for all providers in v1 to allow the provider to scale to zero; any inability to apply or confirm that window MUST be recorded as a parity exception.
 - **FR-014**: The benchmark runner MUST record, for each cold-start step, whether scale-to-zero was confirmed before the probe was sent or whether a parity exception applies.
 - **FR-015**: Each provider's scale-to-zero behaviour, idle policy, and any known cold-start caveats MUST be documented; deviations from standard idle-window behaviour MUST be marked as parity exceptions.
 - **FR-016**: Parity exceptions MUST NOT cause a benchmark run to fail; they MUST be recorded as annotations in the result set and noted in the run metadata.
@@ -123,19 +131,19 @@ A third-party reviewer wants to independently reproduce the benchmark by followi
 **Fairness Constraints**
 
 - **FR-021**: The benchmark runner MUST be a single shared tool used identically for all four providers; provider-specific runner scripts are not permitted in v1.
-- **FR-022**: [NEEDS CLARIFICATION: Idle window duration — what is the minimum idle period (in minutes) required before firing the cold-start probe, and should it be the same for all providers or provider-specific? Default assumption: 15 minutes uniform, but provider-specific overrides may be needed for AWS Lambda (shorter recycle) vs Scaleway (longer warm-up).]
-- **FR-023**: [NEEDS CLARIFICATION: Matrix payload dimensions — what fixed matrix sizes (e.g., 50×50, 100×100, 200×200) should the payload catalog define? Default assumption: two sizes (small: 100×100 and medium: 200×200) with a documented maximum payload byte limit.]
+- **FR-022**: The minimum idle period before every cold-start probe MUST be 15 minutes and MUST be applied identically to all providers in v1; provider-specific idle-window overrides are out of scope for v1.
+- **FR-023**: The payload catalog MUST define exactly two fixed matrix payloads in v1: 100×100 and 200×200; those same payload definitions MUST be used across all providers.
 
 **Summary Metrics**
 
-- **FR-024**: [NEEDS CLARIFICATION: Required summary statistics — which aggregations must the result set include? Default assumption: p50, p95, and p99 latency per provider per intent category (cold/warm), plus min and max, but the exact required set has not been confirmed.]
+- **FR-024**: Benchmark summary output MUST include p50, p95, p99, min, and max latency for each provider and each intent category (`cold` and `warm`).
 
 ### Key Entities
 
-- **Provider Deployment**: A benchmark app instance hosted on a specific cloud provider in a specific region. Has attributes: provider name, region, base URL, .NET runtime version, scale-to-zero capability, idle window duration, parity exception flag.
+- **Provider Deployment**: A benchmark app instance hosted on a specific cloud provider in a specific region. Has attributes: provider name, region, base URL, .NET runtime version, scale-to-zero capability, idle window duration (15 minutes in v1), parity exception flag.
 - **Workload File**: A versioned, ordered list of benchmark steps. Has a version identifier and an ordered sequence of steps.
 - **Workload Step**: A single instruction in the workload file. Has: step ID, endpoint type (startup or compute), payload reference, and declared intent (cold or warm).
-- **Payload Catalog**: A fixed, named set of request payloads. Each entry has a name, matrix dimensions, and a byte representation.
+- **Payload Catalog**: A fixed, named set of request payloads. Each entry has a name, matrix dimensions (100×100 or 200×200 in v1), and a byte representation.
 - **Benchmark Run**: A single execution of the full workload against one or more providers. Has: run ID, timestamp, workload file version, list of participating providers, and collected result records.
 - **Result Record**: A single measured outcome for one workload step against one provider. Has: provider, region, step ID, latency (ms), HTTP status, cold/warm intent, computation result (for compute steps), and optional annotations.
 - **Parity Exception**: A documented deviation from the standard cold-start measurement protocol for a specific provider. Has: provider, exception type, description, and impact on result interpretation.
@@ -151,6 +159,7 @@ A third-party reviewer wants to independently reproduce the benchmark by followi
 - **SC-005**: Every cold-start probe step is preceded by a confirmed or documented idle period; no result record labelled `intent: cold` is produced from a request sent to a warm instance without a parity exception annotation.
 - **SC-006**: Parity exceptions, if any, are fully documented before benchmark results are published, including the provider, the nature of the exception, and its impact on result comparability.
 - **SC-007**: The benchmark runner completes a full four-provider run without operator intervention beyond initial configuration; any failure is recorded in the result set and does not require a manual restart of the entire run.
+- **SC-008**: The published summary for each benchmark run includes p50, p95, p99, min, and max latency for every provider and for both `cold` and `warm` intent categories.
 
 ## Assumptions
 
