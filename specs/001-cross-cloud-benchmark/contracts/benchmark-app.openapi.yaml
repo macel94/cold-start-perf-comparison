@@ -4,7 +4,8 @@ info:
   version: 1.0.0
   description: >
     Shared HTTP contract for the single .NET benchmark app deployed to GCP Cloud Run,
-    AWS Lambda-hosted ASP.NET, Azure Container Apps, and Scaleway Serverless Containers.
+    AWS Lambda-hosted ASP.NET, Azure Container Apps, Scaleway Serverless Containers,
+    and Unikraft/KraftCloud.
 servers:
   - url: https://{baseUrl}
     variables:

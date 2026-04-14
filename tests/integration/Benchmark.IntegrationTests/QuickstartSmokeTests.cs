@@ -13,6 +13,7 @@ public sealed class QuickstartSmokeTests
         Assert.Contains("dotnet test cold-start-perf-comparison.sln", readme);
         Assert.Contains("dotnet run --project src/BenchmarkRunner", readme);
         Assert.Contains("deploy/gcp-cloud-run", quickstart);
+        Assert.Contains("deploy/unikraft-kraftcloud", quickstart);
         Assert.Contains("benchmark-results", quickstart);
     }
 }

@@ -64,7 +64,7 @@ silent behavior differences. Rationale: transparent caveats protect the
 credibility of published comparisons.
 
 ### V. Minimal v1 Scope & Simplicity
-Version 1 is intentionally narrow. The repository MUST limit v1 to exactly four
+Version 1 is intentionally narrow. The repository MUST limit v1 to exactly five
 providers, one shared ASP.NET Core benchmark app, one thin AWS Lambda host
 shim, one shared sequential runner, two fixed matrix payloads (100x100 and
 200x200), unauthenticated benchmark endpoints, and the published cold and warm

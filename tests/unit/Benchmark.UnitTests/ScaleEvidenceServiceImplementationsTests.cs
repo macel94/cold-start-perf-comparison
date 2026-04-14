@@ -20,11 +20,13 @@ public sealed class ScaleEvidenceServiceImplementationsTests
         var cloudRun = await new CloudRunScaleEvidenceService().ConfirmScaleToZeroAsync(CreateProvider("gcp-cloud-run", true), CancellationToken.None);
         var azure = await new AzureContainerAppsScaleEvidenceService().ConfirmScaleToZeroAsync(CreateProvider("azure-container-apps", false), CancellationToken.None);
         var scaleway = await new ScalewayScaleEvidenceService().ConfirmScaleToZeroAsync(CreateProvider("scaleway-serverless-containers", true), CancellationToken.None);
+        var unikraft = await new UnikraftKraftCloudScaleEvidenceService().ConfirmScaleToZeroAsync(CreateProvider("unikraft-kraftcloud", true), CancellationToken.None);
 
         Assert.True(cloudRun.ScaleToZeroConfirmed);
         Assert.False(azure.ScaleToZeroConfirmed);
         Assert.Equal("scale-to-zero-timeout", azure.ExceptionType);
         Assert.True(scaleway.ScaleToZeroConfirmed);
+        Assert.True(unikraft.ScaleToZeroConfirmed);
     }
 
     private static ProviderDeployment CreateProvider(string providerId, bool simulatedScaleConfirmed) =>

@@ -47,7 +47,8 @@ var scaleEvidenceServices = new IProviderScaleEvidenceService[]
     new CloudRunScaleEvidenceService(),
     new AwsLambdaScaleEvidenceService(),
     new AzureContainerAppsScaleEvidenceService(),
-    new ScalewayScaleEvidenceService()
+    new ScalewayScaleEvidenceService(),
+    new UnikraftKraftCloudScaleEvidenceService()
 };
 
 var sequentialWorkloadExecutor = new SequentialWorkloadExecutor(

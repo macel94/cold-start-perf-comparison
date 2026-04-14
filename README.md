@@ -6,6 +6,7 @@ Cross-cloud .NET 10 cold-start benchmark for:
 - AWS Lambda (`eu-west-1`)
 - Azure Container Apps (`westeurope`)
 - Scaleway Serverless Containers (`fr-par`)
+- Unikraft/KraftCloud (`fra`)
 
 ## v1 guardrails
 
@@ -15,7 +16,7 @@ Cross-cloud .NET 10 cold-start benchmark for:
 - Fixed paths: `GET /api/startup` and `POST /api/compute/matrix`
 - Uniform 15-minute idle window before every `intent: cold` step
 - No auth and no provider-specific fields in the normalized result schema
-- Warm-start optimizations must remain disabled: Cloud Run min instances, Azure min replicas, AWS provisioned concurrency, and equivalent Scaleway keep-warm settings
+- Warm-start optimizations must remain disabled: Cloud Run min instances, Azure min replicas, AWS provisioned concurrency, Scaleway keep-warm settings, and Unikraft/KraftCloud stateful scale-to-zero snapshots
 
 ## Repository layout
 
@@ -76,11 +77,12 @@ Each output envelope records:
 - AWS Lambda: `deploy/aws-lambda/`
 - Azure Container Apps: `deploy/azure-container-apps/`
 - Scaleway Serverless Containers: `deploy/scaleway-serverless/`
+- Unikraft/KraftCloud: `deploy/unikraft-kraftcloud/`
 
 Each folder contains:
 
 - `descriptor.yaml` with canonical region, runtime pin, idle policy, resource settings, and parity notes
-- native deployment manifest
+- provider-native deployment asset or command recipe
 - provider-specific README with operator steps
 
 ## Workload artifact
@@ -92,6 +94,7 @@ Each folder contains:
 - Keep the runtime/toolchain pins unchanged when collecting benchmark data
 - Record provider descriptor changes before publishing results
 - AWS Lambda cold-start intent is inferred after the same 15-minute idle window and is always annotated with a parity exception in v1
+- Unikraft/KraftCloud should use the documented `.NET 10` HTTP server workflow and `--scale-to-zero policy=on`, while leaving stateful snapshotting disabled for baseline parity
 
 ## Quickstart
 

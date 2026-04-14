@@ -22,7 +22,7 @@
 
 ## v1 Guardrails (Keep Visible During Implementation)
 
-- Exactly four providers only: GCP Cloud Run, AWS Lambda, Azure Container Apps, Scaleway Serverless Containers
+- Exactly five providers only: GCP Cloud Run, AWS Lambda, Azure Container Apps, Scaleway Serverless Containers, Unikraft/KraftCloud
 - One shared `.NET 10` benchmark app plus one thin AWS Lambda host shim
 - One shared runner in `src/BenchmarkRunner/`
 - Sequential execution only in v1; no parallel request dispatch
@@ -98,9 +98,9 @@
 ### Implementation for User Story 2
 
 - [X] T021 [US2] Implement the fixed v1 cold-step idle coordinator in `src/BenchmarkRunner/Services/ColdStartIdleWindowCoordinator.cs`
-- [X] T022 [P] [US2] Implement provider zero-state evidence services in `src/BenchmarkRunner/Services/ScaleEvidence/IProviderScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/CloudRunScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/AzureContainerAppsScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/ScalewayScaleEvidenceService.cs`, and `src/BenchmarkRunner/Services/ScaleEvidence/AwsLambdaScaleEvidenceService.cs`
+- [X] T022 [P] [US2] Implement provider zero-state evidence services in `src/BenchmarkRunner/Services/ScaleEvidence/IProviderScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/CloudRunScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/AzureContainerAppsScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/ScalewayScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/AwsLambdaScaleEvidenceService.cs`, and `src/BenchmarkRunner/Services/ScaleEvidence/UnikraftKraftCloudScaleEvidenceService.cs`
 - [X] T023 [US2] Integrate cold-step confirmation and parity exception recording into `src/BenchmarkRunner/Services/SequentialWorkloadExecutor.cs` and `src/BenchmarkRunner/Services/ParityExceptionRecorder.cs`
-- [X] T024 [US2] Capture per-provider cold-start policy metadata, canonical regions, disabled warm-start optimizations, and benchmark resource settings in `deploy/gcp-cloud-run/descriptor.yaml`, `deploy/aws-lambda/descriptor.yaml`, `deploy/azure-container-apps/descriptor.yaml`, and `deploy/scaleway-serverless/descriptor.yaml` using GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, and Scaleway=`fr-par`
+- [X] T024 [US2] Capture per-provider cold-start policy metadata, canonical regions, disabled warm-start optimizations, and benchmark resource settings in `deploy/gcp-cloud-run/descriptor.yaml`, `deploy/aws-lambda/descriptor.yaml`, `deploy/azure-container-apps/descriptor.yaml`, `deploy/scaleway-serverless/descriptor.yaml`, and `deploy/unikraft-kraftcloud/descriptor.yaml` using GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, Scaleway=`fr-par`, and Unikraft=`fra`
 
 **Checkpoint**: User Story 2 makes cold-start intent trustworthy and transparent even when a platform cannot expose deterministic scale-to-zero evidence.
 
@@ -145,7 +145,7 @@
 
 - [X] T035 [US4] Add the thin AWS Lambda host shim over the shared app in `src/BenchmarkApp.AwsLambdaHost/Program.cs` and `src/BenchmarkApp.AwsLambdaHost/LambdaEntryPoint.cs`
 - [X] T036 [P] [US4] Create GCP Cloud Run and Azure Container Apps native deployment manifests plus operator notes alongside the benchmark descriptors in `deploy/gcp-cloud-run/service.yaml`, `deploy/gcp-cloud-run/README.md`, `deploy/azure-container-apps/containerapp.yaml`, and `deploy/azure-container-apps/README.md`
-- [X] T037 [P] [US4] Create AWS Lambda and Scaleway native deployment manifests plus operator notes alongside the benchmark descriptors in `deploy/aws-lambda/template.yaml`, `deploy/aws-lambda/README.md`, `deploy/scaleway-serverless/container.yaml`, and `deploy/scaleway-serverless/README.md`
+- [X] T037 [P] [US4] Create AWS Lambda, Scaleway, and Unikraft/KraftCloud deployment assets plus operator notes alongside the benchmark descriptors in `deploy/aws-lambda/template.yaml`, `deploy/aws-lambda/README.md`, `deploy/scaleway-serverless/container.yaml`, `deploy/scaleway-serverless/README.md`, and `deploy/unikraft-kraftcloud/README.md`
 - [X] T038 [US4] Document the canonical provider regions, runtime/toolchain pin (`10.0.5` / `10.0.201`), disabled warm-start optimizations, resource settings, deployment steps, and end-to-end run instructions in `README.md` and `specs/001-cross-cloud-benchmark/quickstart.md`
 
 **Checkpoint**: User Story 4 makes the benchmark reproducible from repository documentation and deployment assets alone.
@@ -158,7 +158,7 @@
 
 - [X] T039 [P] Update benchmark configuration examples and output-path guidance in `src/BenchmarkRunner/appsettings.json` and `README.md`
 - [X] T040 [P] Add final cross-project test wiring and execution guidance in `tests/contract/Benchmark.ContractTests/Benchmark.ContractTests.csproj`, `tests/integration/Benchmark.IntegrationTests/Benchmark.IntegrationTests.csproj`, `tests/unit/Benchmark.UnitTests/Benchmark.UnitTests.csproj`, and `README.md`
-- [X] T041 Validate v1 guardrail, parity-caveat, warm-start-disablement, and resource-setting language in `README.md`, `deploy/gcp-cloud-run/README.md`, `deploy/aws-lambda/README.md`, `deploy/azure-container-apps/README.md`, and `deploy/scaleway-serverless/README.md`
+- [X] T041 Validate v1 guardrail, parity-caveat, warm-start-disablement, and resource-setting language in `README.md`, `deploy/gcp-cloud-run/README.md`, `deploy/aws-lambda/README.md`, `deploy/azure-container-apps/README.md`, `deploy/scaleway-serverless/README.md`, and `deploy/unikraft-kraftcloud/README.md`
 
 ---
 

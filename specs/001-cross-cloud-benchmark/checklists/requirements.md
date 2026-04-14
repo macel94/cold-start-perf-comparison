@@ -24,7 +24,7 @@
 - [x] All acceptance scenarios are defined
 - [x] Edge cases are identified
 - [x] Scope is clearly bounded
-  > v1 scope: 4 providers, 1 region each, sequential workload, no concurrency, no auth. Multi-region and concurrency deferred to future versions.
+  > v1 scope: 5 providers, 1 region each, sequential workload, no concurrency, no auth. Multi-region and concurrency deferred to future versions.
 - [x] Dependencies and assumptions identified
 
 ## Feature Readiness

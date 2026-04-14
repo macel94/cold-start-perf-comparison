@@ -16,8 +16,8 @@ This quickstart is the operator-facing path for deploying one provider and runni
 
 ## v1 Non-Negotiables
 
-- Provider set is fixed: GCP Cloud Run, AWS Lambda-hosted ASP.NET endpoint, Azure Container Apps, Scaleway Serverless Containers.
-- Provider regions are fixed for v1: GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, Scaleway=`fr-par`.
+- Provider set is fixed: GCP Cloud Run, AWS Lambda-hosted ASP.NET endpoint, Azure Container Apps, Scaleway Serverless Containers, and Unikraft/KraftCloud.
+- Provider regions are fixed for v1: GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, Scaleway=`fr-par`, Unikraft=`fra`.
 - Use one shared .NET benchmark app contract.
 - Pin ASP.NET Core runtime `10.0.5` and .NET SDK `10.0.201`.
 - Use one workload definition and one sequential runner.
@@ -25,7 +25,7 @@ This quickstart is the operator-facing path for deploying one provider and runni
 - Apply the same 15-minute idle window before every cold step.
 - Use only the `100×100` and `200×200` payloads.
 - Publish summary metrics as `p50`, `p95`, `p99`, `min`, and `max` for each provider and each intent category.
-- Disable or leave unset warm-start optimizations such as Cloud Run min instances, Azure Container Apps minimum replicas, AWS provisioned concurrency, and equivalent Scaleway keep-warm settings.
+- Disable or leave unset warm-start optimizations such as Cloud Run min instances, Azure Container Apps minimum replicas, AWS provisioned concurrency, Scaleway keep-warm settings, and Unikraft/KraftCloud stateful scale-to-zero snapshots.
 - Document benchmark resource and billing-affecting settings in each provider descriptor and deployment README.
 
 ## Single-provider benchmark flow
@@ -42,17 +42,19 @@ This quickstart is the operator-facing path for deploying one provider and runni
 
    Use exactly one of the canonical v1 targets:
 
-   - GCP Cloud Run: `deploy/gcp-cloud-run/`
-   - AWS Lambda: `deploy/aws-lambda/`
-   - Azure Container Apps: `deploy/azure-container-apps/`
-   - Scaleway Serverless Containers: `deploy/scaleway-serverless/`
+    - GCP Cloud Run: `deploy/gcp-cloud-run/`
+    - AWS Lambda: `deploy/aws-lambda/`
+    - Azure Container Apps: `deploy/azure-container-apps/`
+    - Scaleway Serverless Containers: `deploy/scaleway-serverless/`
+    - Unikraft/KraftCloud: `deploy/unikraft-kraftcloud/`
 
 3. **Keep warm-start optimization disabled**
 
-   - Cloud Run `minScale` must be `0`
-   - Azure `minReplicas` must be `0`
-   - AWS provisioned concurrency must remain disabled
-   - Scaleway keep-warm settings must remain disabled
+    - Cloud Run `minScale` must be `0`
+    - Azure `minReplicas` must be `0`
+    - AWS provisioned concurrency must remain disabled
+    - Scaleway keep-warm settings must remain disabled
+    - Unikraft/KraftCloud `--scale-to-zero policy=on` may be enabled, but stateful snapshots must remain disabled
 
 4. **Deploy the benchmark app**
 

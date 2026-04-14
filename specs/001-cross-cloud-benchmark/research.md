@@ -11,7 +11,7 @@
 ## Decision 2: Use one shared ASP.NET Core Minimal API benchmark app
 
 - **Decision**: Model the benchmark target as one ASP.NET Core Minimal API app exposing identical paths on all providers, with only a thin AWS Lambda host shim for packaging.
-- **Rationale**: This satisfies the single-app requirement while keeping the endpoint logic, payload handling, and response contracts identical across GCP Cloud Run, Azure Container Apps, and Scaleway Serverless Containers. AWS Lambda still needs an adapter layer, but the benchmark behavior remains centralized in one app codebase.
+- **Rationale**: This satisfies the single-app requirement while keeping the endpoint logic, payload handling, and response contracts identical across GCP Cloud Run, Azure Container Apps, Scaleway Serverless Containers, and Unikraft/KraftCloud. AWS Lambda still needs an adapter layer, but the benchmark behavior remains centralized in one app codebase.
 - **Alternatives considered**:
   - **Separate per-provider apps**: rejected because it would undermine fairness and duplicate logic.
   - **Pure Lambda function implementation for AWS only**: rejected because it would diverge from the shared ASP.NET contract and inflate cross-provider differences.
@@ -19,7 +19,7 @@
 ## Decision 3: Keep the benchmark runner as one sequential .NET CLI
 
 - **Decision**: Implement the benchmark runner as one .NET CLI that executes the workload in exact file order with no parallelism.
-- **Rationale**: Sequential execution is already fixed in the spec for v1 and eliminates concurrency noise when interpreting cold-start behavior. A single runner also reinforces fairness by ensuring the same timing, serialization, summary, and error-handling logic is used for all four providers.
+- **Rationale**: Sequential execution is already fixed in the spec for v1 and eliminates concurrency noise when interpreting cold-start behavior. A single runner also reinforces fairness by ensuring the same timing, serialization, summary, and error-handling logic is used for all five providers.
 - **Alternatives considered**:
   - **Provider-specific scripts**: rejected by FR-021.
   - **Concurrent execution**: rejected by FR-011 and A-004.
@@ -73,8 +73,8 @@
 
 ## Decision 10: Fix one European region-aligned location per provider
 
-- **Decision**: Use `europe-west1` for GCP Cloud Run, `eu-west-1` for AWS Lambda, `westeurope` for Azure Container Apps, and `fr-par` for Scaleway Serverless Containers.
-- **Rationale**: A Europe-centered region map reduces transcontinental variance, aligns naturally with the inclusion of a European provider, and gives one explicit canonical location per platform for reproducible v1 runs.
+- **Decision**: Use `europe-west1` for GCP Cloud Run, `eu-west-1` for AWS Lambda, `westeurope` for Azure Container Apps, `fr-par` for Scaleway Serverless Containers, and `fra` for Unikraft/KraftCloud.
+- **Rationale**: A Europe-centered region map reduces transcontinental variance, aligns naturally with the inclusion of European-native platforms, and gives one explicit canonical location per platform for reproducible v1 runs.
 - **Alternatives considered**:
   - **Provider-default regions**: rejected because they would drift geographically and weaken comparability.
   - **Multiple regions per provider**: rejected because multi-region comparison is out of scope for v1.

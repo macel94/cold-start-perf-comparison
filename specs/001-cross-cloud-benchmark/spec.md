@@ -3,7 +3,7 @@
 **Feature Branch**: `001-cross-cloud-benchmark`  
 **Created**: 2026-04-14  
 **Status**: Approved  
-**Input**: User description: "Implement planning artifacts for a .NET Web API cold-start performance comparison benchmark across GCP Cloud Run, AWS Lambda, Azure Container Apps, and a European provider (Scaleway preferred)."
+**Input**: User description: "Implement planning artifacts for a .NET Web API cold-start performance comparison benchmark across GCP Cloud Run, AWS Lambda, Azure Container Apps, Scaleway, and Unikraft/KraftCloud."
 
 ## Clarifications
 
@@ -17,7 +17,7 @@
 
 ### User Story 1 — Run a Reproducible Cross-Provider Cold-Start Benchmark (Priority: P1)
 
-A benchmark operator wants to execute a standardised, reproducible benchmark run against all four cloud providers in a single session and receive a set of structured results that are directly comparable across providers.
+A benchmark operator wants to execute a standardised, reproducible benchmark run against all five cloud providers in a single session and receive a set of structured results that are directly comparable across providers.
 
 **Why this priority**: This is the core deliverable of the project. All other stories depend on having a working, fair, end-to-end benchmark run. Without this story there is no usable output.
 
@@ -25,8 +25,8 @@ A benchmark operator wants to execute a standardised, reproducible benchmark run
 
 **Acceptance Scenarios**:
 
-1. **Given** a benchmark operator has deployed all four provider benchmark apps, **When** they execute the benchmark runner with the versioned workload file, **Then** each provider returns results for every workload step in the defined order, containing all required result fields.
-2. **Given** the same versioned workload file is used for all four providers, **When** benchmark results are collected, **Then** the step IDs and payload contents are identical across all four providers' result sets.
+1. **Given** a benchmark operator has deployed all five provider benchmark apps, **When** they execute the benchmark runner with the versioned workload file, **Then** each provider returns results for every workload step in the defined order, containing all required result fields.
+2. **Given** the same versioned workload file is used for all five providers, **When** benchmark results are collected, **Then** the step IDs and payload contents are identical across all five providers' result sets.
 3. **Given** a benchmark run has completed, **When** the operator inspects the results, **Then** cold-start steps and warm/compute steps are clearly identified and separated in the output.
 4. **Given** a result schema is defined, **When** any provider emits a result record, **Then** the record conforms to the normalised result schema without provider-specific extensions.
 
@@ -95,22 +95,22 @@ A third-party reviewer wants to independently reproduce the benchmark by followi
 
 **Benchmark Scope and Providers**
 
-- **FR-001**: The benchmark MUST cover exactly four cloud providers in v1: GCP Cloud Run, AWS Lambda (ASP.NET-hosted endpoint), Azure Container Apps, and Scaleway Serverless Containers.
-- **FR-002**: Each provider MUST have exactly one documented benchmark region for v1; cross-region comparisons are out of scope. The canonical v1 regions are `europe-west1` for GCP Cloud Run, `eu-west-1` for AWS Lambda, `westeurope` for Azure Container Apps, and `fr-par` for Scaleway Serverless Containers.
+- **FR-001**: The benchmark MUST cover exactly five cloud providers in v1: GCP Cloud Run, AWS Lambda (ASP.NET-hosted endpoint), Azure Container Apps, Scaleway Serverless Containers, and Unikraft/KraftCloud.
+- **FR-002**: Each provider MUST have exactly one documented benchmark region for v1; cross-region comparisons are out of scope. The canonical v1 regions are `europe-west1` for GCP Cloud Run, `eu-west-1` for AWS Lambda, `westeurope` for Azure Container Apps, `fr-par` for Scaleway Serverless Containers, and `fra` for Unikraft/KraftCloud.
 - **FR-003**: Each provider MUST have a dedicated benchmark application deployment that is independent of the other providers.
 
 **Benchmark API Contract**
 
 - **FR-004**: Every benchmark app MUST expose a lightweight startup/readiness endpoint that returns a success response with minimal compute overhead, used as the cold-start probe target.
 - **FR-005**: Every benchmark app MUST expose a POST endpoint that accepts a fixed matrix multiplication payload and returns the computation result, used as the compute probe target.
-- **FR-006**: All four benchmark apps MUST expose endpoints at the same URL path structure so the benchmark runner can target any provider by changing only the base URL.
-- **FR-007**: The .NET runtime version used MUST be identical across all four provider deployments; the exact v1 baseline is ASP.NET Core runtime `10.0.5`, built with .NET SDK `10.0.201`, and any later change MUST be versioned and documented before benchmark results are published.
+- **FR-006**: All five benchmark apps MUST expose endpoints at the same URL path structure so the benchmark runner can target any provider by changing only the base URL.
+- **FR-007**: The .NET runtime version used MUST be identical across all five provider deployments; the exact v1 baseline is ASP.NET Core runtime `10.0.5`, built with .NET SDK `10.0.201`, and any later change MUST be versioned and documented before benchmark results are published.
 
 **Workload Definition**
 
 - **FR-008**: The benchmark workload MUST be defined in a versioned workload file that specifies each step in an exact, ordered sequence.
 - **FR-009**: The workload file MUST include, for each step: a unique step ID, the endpoint target (startup or compute), the request payload (or a reference to a named payload from the payload catalog), and the declared intent (`cold` or `warm`).
-- **FR-010**: The same workload file version MUST be used for all four provider runs within a single benchmark session; the file MUST NOT be modified between provider runs.
+- **FR-010**: The same workload file version MUST be used for all five provider runs within a single benchmark session; the file MUST NOT be modified between provider runs.
 - **FR-011**: The benchmark runner MUST execute workload steps in the exact order defined in the workload file, without reordering or parallelising steps (single-request sequential execution in v1).
 - **FR-012**: The request payload catalog MUST be a documented, fixed set of named payloads; the same payload catalog MUST be used across all providers.
 
@@ -124,13 +124,13 @@ A third-party reviewer wants to independently reproduce the benchmark by followi
 **Result Schema**
 
 - **FR-017**: Every result record MUST include: provider identifier, region, step ID, end-to-end latency (measured at the runner), HTTP status code, and cold/warm intent.
-- **FR-018**: The result schema MUST be identical across all four providers; provider-specific fields are not permitted in the normalised schema (they may appear in a separate annotations block).
+- **FR-018**: The result schema MUST be identical across all five providers; provider-specific fields are not permitted in the normalised schema (they may appear in a separate annotations block).
 - **FR-019**: The benchmark run MUST produce a run metadata record that includes: run ID, timestamp, workload file version, benchmark app contract version, result schema version, and the list of providers included in the run.
 - **FR-020**: Matrix computation results (actual output values) MUST be captured in the result record to allow correctness verification separate from latency measurement.
 
 **Fairness Constraints**
 
-- **FR-021**: The benchmark runner MUST be a single shared tool used identically for all four providers; provider-specific runner scripts are not permitted in v1.
+- **FR-021**: The benchmark runner MUST be a single shared tool used identically for all five providers; provider-specific runner scripts are not permitted in v1.
 - **FR-022**: The minimum idle period before every cold-start probe MUST be 15 minutes and MUST be applied identically to all providers in v1; provider-specific idle-window overrides are out of scope for v1.
 - **FR-023**: The payload catalog MUST define exactly two fixed matrix payloads in v1: 100×100 and 200×200; those same payload definitions MUST be used across all providers.
 
@@ -152,20 +152,20 @@ A third-party reviewer wants to independently reproduce the benchmark by followi
 
 ### Measurable Outcomes
 
-- **SC-001**: The identical workload file version is used, without modification, across all four providers in a benchmark session — verifiable by comparing the workload file hash recorded in each run metadata record.
+- **SC-001**: The identical workload file version is used, without modification, across all five providers in a benchmark session — verifiable by comparing the workload file hash recorded in each run metadata record.
 - **SC-002**: Cold-start result records and warm/compute result records are unambiguously separated in the output; a reviewer can filter each category without inspecting raw request logs.
-- **SC-003**: All four providers emit result records that conform to the same normalised schema, such that a single result-processing workflow can consume all four result sets without provider-specific transformation.
+- **SC-003**: All five providers emit result records that conform to the same normalised schema, such that a single result-processing workflow can consume all five result sets without provider-specific transformation.
 - **SC-004**: A third party can reproduce a complete benchmark run against any single provider by following only the project documentation, without requiring additional guidance from the original authors.
 - **SC-005**: Every cold-start probe step is preceded by a confirmed or documented idle period; no result record labelled `intent: cold` is produced from a request sent to a warm instance without a parity exception annotation.
 - **SC-006**: Parity exceptions, if any, are fully documented before benchmark results are published, including the provider, the nature of the exception, and its impact on result comparability.
-- **SC-007**: The benchmark runner completes a full four-provider run without operator intervention beyond initial configuration; any failure is recorded in the result set and does not require a manual restart of the entire run.
+- **SC-007**: The benchmark runner completes a full five-provider run without operator intervention beyond initial configuration; any failure is recorded in the result set and does not require a manual restart of the entire run.
 - **SC-008**: The published summary for each benchmark run includes p50, p95, p99, min, and max latency for every provider and for both `cold` and `warm` intent categories.
 
 ## Assumptions
 
 - **A-001**: AWS Lambda with an ASP.NET-compatible hosting adapter is the AWS hosting path for v1, as stated in the feature request. Alternative AWS compute options (e.g., ECS Fargate, App Runner) are out of scope for v1.
-- **A-002**: Scaleway Serverless Containers is the European provider for v1 because it offers native scale-to-zero and is explicitly preferred in the feature request over Hetzner. Hetzner is out of scope for v1.
-- **A-003**: Each provider will be deployed to a single, documented region; multi-region or multi-zone deployments are out of scope for v1. The canonical region map is GCP Cloud Run=`europe-west1`, AWS Lambda=`eu-west-1`, Azure Container Apps=`westeurope`, and Scaleway Serverless Containers=`fr-par`.
+- **A-002**: Scaleway Serverless Containers remains in v1 from the original European-provider requirement, and Unikraft/KraftCloud is additionally included because official `.NET 10` and scale-to-zero guidance is available. Hetzner is out of scope for v1.
+- **A-003**: Each provider will be deployed to a single, documented region; multi-region or multi-zone deployments are out of scope for v1. The canonical region map is GCP Cloud Run=`europe-west1`, AWS Lambda=`eu-west-1`, Azure Container Apps=`westeurope`, Scaleway Serverless Containers=`fr-par`, and Unikraft/KraftCloud=`fra`.
 - **A-004**: The benchmark workload is executed sequentially (one request at a time, no concurrent requests) in v1. Concurrency experiments are deferred to a future version.
 - **A-005**: The benchmark runner operates from a single stable network location; network variance between the runner and providers is not controlled in v1 but is documented as a known source of variance.
 - **A-006**: The cold-start probe target is the lightweight startup/readiness endpoint, not the compute endpoint. This avoids conflating initialisation latency with compute latency in cold-start measurements.
