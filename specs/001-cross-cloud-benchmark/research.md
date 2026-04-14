@@ -5,7 +5,7 @@
 - **Decision**: Use ASP.NET Core runtime `10.0.5` with .NET SDK `10.0.201` as the common runtime baseline for the shared benchmark app, runner, and AWS host adapter.
 - **Rationale**: This pins an exact, reproducible runtime/toolchain combination while staying within the .NET 10 family that is broadly supported across container-based serverless platforms and AWS Lambda in 2026. It also keeps the benchmark fair by using the same runtime family everywhere.
 - **Alternatives considered**:
-  - **.NET 10 LTS**: rejected for v1 because provider rollout timing may vary during 2026.
+  - **.NET 8 LTS**: rejected because the repository baseline and benchmark documentation now standardize on .NET 10 across the spec and implementation.
   - **.NET 9 STS**: rejected because it shortens support life and adds upgrade churn during the benchmark project.
 
 ## Decision 2: Use one shared ASP.NET Core Minimal API benchmark app
