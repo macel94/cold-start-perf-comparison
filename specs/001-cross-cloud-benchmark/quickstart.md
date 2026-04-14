@@ -24,7 +24,7 @@ This quickstart is for the next implementation phase. The repository is still pl
 - Use one workload definition and one sequential runner.
 - Record workload version, benchmark app contract version, and result schema version in every benchmark run envelope.
 - Apply the same 15-minute idle window before every cold step.
-- Use only the `100x100` and `200x200` payloads.
+- Use only the `100×100` and `200×200` payloads.
 - Publish summary metrics as `p50`, `p95`, `p99`, `min`, and `max` for each provider and each intent category.
 - Disable or leave unset warm-start optimizations such as Cloud Run min instances, Azure Container Apps minimum replicas, AWS provisioned concurrency, and equivalent Scaleway keep-warm settings.
 - Document benchmark resource and billing-affecting settings in each provider descriptor and deployment README.
