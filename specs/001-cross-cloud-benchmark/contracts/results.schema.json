@@ -1,0 +1,532 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/specs/001-cross-cloud-benchmark/contracts/results.schema.json",
+  "title": "CrossCloudBenchmarkResults",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "runId",
+    "startedAtUtc",
+    "workloadVersion",
+    "workloadFileHash",
+    "apiContractVersion",
+    "resultSchemaVersion",
+    "providers",
+    "runnerVersion",
+    "records",
+    "parityExceptions",
+    "summaryMetrics",
+    "status"
+  ],
+  "properties": {
+    "runId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "startedAtUtc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completedAtUtc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "workloadVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workloadFileHash": {
+      "type": "string",
+      "minLength": 1
+    },
+    "apiContractVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "resultSchemaVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "providers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "gcp-cloud-run",
+          "aws-lambda",
+          "azure-container-apps",
+          "scaleway-serverless-containers"
+        ]
+      }
+    },
+    "runnerVersion": {
+      "type": "string"
+    },
+    "networkLocationLabel": {
+      "type": "string"
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/resultRecord"
+      }
+    },
+    "parityExceptions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/parityException"
+      }
+    },
+    "summaryMetrics": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/summaryMetric"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "completed",
+        "completed-with-errors",
+        "failed"
+      ]
+    }
+  },
+  "$defs": {
+    "resultRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "providerId",
+        "region",
+        "stepId",
+        "sequence",
+        "intent",
+        "endpoint",
+        "startedAtUtc",
+        "completedAtUtc",
+        "latencyMs",
+        "httpStatus",
+        "correctness"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "providerId": {
+          "type": "string",
+          "enum": [
+            "gcp-cloud-run",
+            "aws-lambda",
+            "azure-container-apps",
+            "scaleway-serverless-containers"
+          ]
+        },
+        "region": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stepId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "intent": {
+          "type": "string",
+          "enum": [
+            "cold",
+            "warm"
+          ]
+        },
+        "endpoint": {
+          "type": "string",
+          "enum": [
+            "startup",
+            "compute"
+          ]
+        },
+        "startedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "latencyMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "httpStatus": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "correctness": {
+          "type": "string",
+          "enum": [
+            "not-applicable",
+            "passed",
+            "failed"
+          ]
+        },
+        "responseBody": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/matrixComputeResponse100"
+            },
+            {
+              "$ref": "#/$defs/matrixComputeResponse200"
+            }
+          ]
+        },
+        "errorType": {
+          "type": "string"
+        },
+        "errorDetail": {
+          "type": "string"
+        },
+        "scaleToZeroConfirmed": {
+          "type": "boolean"
+        },
+        "annotationRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "cold"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "scaleToZeroConfirmed"
+            ],
+            "properties": {
+              "endpoint": {
+                "const": "startup"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "warm"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "warm"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "scaleToZeroConfirmed"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "responseBody"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "startup"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "correctness": {
+                "const": "not-applicable"
+              }
+            },
+            "not": {
+              "required": [
+                "responseBody"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "correctness": {
+                "enum": [
+                  "passed",
+                  "failed"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "cold"
+              },
+              "scaleToZeroConfirmed": {
+                "const": false
+              }
+            },
+            "required": [
+              "intent",
+              "scaleToZeroConfirmed"
+            ]
+          },
+          "then": {
+            "required": [
+              "annotationRefs"
+            ],
+            "properties": {
+              "annotationRefs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "parityException": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parityExceptionId",
+        "providerId",
+        "scope",
+        "type",
+        "description",
+        "impact",
+        "recordedAtUtc"
+      ],
+      "properties": {
+        "parityExceptionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "providerId": {
+          "type": "string",
+          "enum": [
+            "gcp-cloud-run",
+            "aws-lambda",
+            "azure-container-apps",
+            "scaleway-serverless-containers"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "provider",
+            "step",
+            "run"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "impact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relatedStepId": {
+          "type": "string"
+        },
+        "recordedAtUtc": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "summaryMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "providerId",
+        "intent",
+        "sampleCount",
+        "minLatencyMs",
+        "p50LatencyMs",
+        "p95LatencyMs",
+        "p99LatencyMs",
+        "maxLatencyMs",
+        "errorCount",
+        "parityExceptionCount"
+      ],
+      "properties": {
+        "providerId": {
+          "type": "string",
+          "enum": [
+            "gcp-cloud-run",
+            "aws-lambda",
+            "azure-container-apps",
+            "scaleway-serverless-containers"
+          ]
+        },
+        "intent": {
+          "type": "string",
+          "enum": [
+            "cold",
+            "warm"
+          ]
+        },
+        "sampleCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minLatencyMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p50LatencyMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p95LatencyMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "p99LatencyMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maxLatencyMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "errorCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parityExceptionCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "matrix100": {
+      "type": "array",
+      "minItems": 100,
+      "maxItems": 100,
+      "items": {
+        "type": "array",
+        "minItems": 100,
+        "maxItems": 100,
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "matrix200": {
+      "type": "array",
+      "minItems": 200,
+      "maxItems": 200,
+      "items": {
+        "type": "array",
+        "minItems": 200,
+        "maxItems": 200,
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "matrixComputeResponse100": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payloadId",
+        "dimension",
+        "resultMatrix"
+      ],
+      "properties": {
+        "payloadId": {
+          "const": "matrix-100x100"
+        },
+        "dimension": {
+          "const": 100
+        },
+        "resultMatrix": {
+          "$ref": "#/$defs/matrix100"
+        }
+      }
+    },
+    "matrixComputeResponse200": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payloadId",
+        "dimension",
+        "resultMatrix"
+      ],
+      "properties": {
+        "payloadId": {
+          "const": "matrix-200x200"
+        },
+        "dimension": {
+          "const": 200
+        },
+        "resultMatrix": {
+          "$ref": "#/$defs/matrix200"
+        }
+      }
+    }
+  }
+}

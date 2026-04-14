@@ -1,0 +1,358 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/specs/001-cross-cloud-benchmark/contracts/workload.schema.json",
+  "title": "CrossCloudBenchmarkWorkload",
+  "description": "Schema-level validation for the v1 workload shape. Custom validation must additionally enforce unique stepId values, contiguous sequence numbering, and the exact two-payload catalog.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workloadVersion",
+    "description",
+    "payloadCatalog",
+    "steps"
+  ],
+  "properties": {
+    "workloadVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payloadCatalog": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "description": "Must contain exactly the two canonical v1 payloads.",
+      "items": {
+        "$ref": "#/$defs/payloadDefinition"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "payloadId": {
+                "const": "matrix-100x100"
+              }
+            },
+            "required": [
+              "payloadId"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "payloadId": {
+                "const": "matrix-200x200"
+              }
+            },
+            "required": [
+              "payloadId"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        }
+      ]
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Custom validation must enforce unique stepId values and contiguous sequence numbering starting at 1.",
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "const": "cold"
+              }
+            },
+            "required": [
+              "intent"
+            ]
+          },
+          "minContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "properties": {
+              "intent": {
+                "const": "warm"
+              }
+            },
+            "required": [
+              "intent"
+            ]
+          },
+          "minContains": 1
+        }
+      ],
+      "items": {
+        "$ref": "#/$defs/workloadStep"
+      }
+    }
+  },
+  "$defs": {
+    "payloadDefinition": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/payloadDefinition100"
+        },
+        {
+          "$ref": "#/$defs/payloadDefinition200"
+        }
+      ]
+    },
+    "payloadDefinition100": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payloadId",
+        "dimension",
+        "leftMatrix",
+        "rightMatrix",
+        "contentHash"
+      ],
+      "properties": {
+        "payloadId": {
+          "const": "matrix-100x100"
+        },
+        "dimension": {
+          "const": 100
+        },
+        "leftMatrix": {
+          "$ref": "#/$defs/matrix100"
+        },
+        "rightMatrix": {
+          "$ref": "#/$defs/matrix100"
+        },
+        "contentHash": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "payloadDefinition200": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "payloadId",
+        "dimension",
+        "leftMatrix",
+        "rightMatrix",
+        "contentHash"
+      ],
+      "properties": {
+        "payloadId": {
+          "const": "matrix-200x200"
+        },
+        "dimension": {
+          "const": 200
+        },
+        "leftMatrix": {
+          "$ref": "#/$defs/matrix200"
+        },
+        "rightMatrix": {
+          "$ref": "#/$defs/matrix200"
+        },
+        "contentHash": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "workloadStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stepId",
+        "sequence",
+        "intent",
+        "endpoint",
+        "method",
+        "expectedStatus"
+      ],
+      "properties": {
+        "stepId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "intent": {
+          "type": "string",
+          "enum": [
+            "cold",
+            "warm"
+          ]
+        },
+        "endpoint": {
+          "type": "string",
+          "enum": [
+            "startup",
+            "compute"
+          ]
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "GET",
+            "POST"
+          ]
+        },
+        "payloadRef": {
+          "type": "string",
+          "enum": [
+            "matrix-100x100",
+            "matrix-200x200"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "expectedStatus": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "cold"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "endpoint": {
+                "const": "startup"
+              },
+              "method": {
+                "const": "GET"
+              }
+            },
+            "not": {
+              "required": [
+                "payloadRef"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "warm"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "payloadRef"
+            ],
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              },
+              "method": {
+                "const": "POST"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "startup"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "method": {
+                "const": "GET"
+              }
+            },
+            "not": {
+              "required": [
+                "payloadRef"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "endpoint": {
+                "const": "compute"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "payloadRef"
+            ],
+            "properties": {
+              "method": {
+                "const": "POST"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "numericMatrix": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "matrix100": {
+      "type": "array",
+      "minItems": 100,
+      "maxItems": 100,
+      "items": {
+        "type": "array",
+        "minItems": 100,
+        "maxItems": 100,
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "matrix200": {
+      "type": "array",
+      "minItems": 200,
+      "maxItems": 200,
+      "items": {
+        "type": "array",
+        "minItems": 200,
+        "maxItems": 200,
+        "items": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

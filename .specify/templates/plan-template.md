@@ -31,7 +31,21 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **Cross-cloud fairness preserved**: one shared app contract, one shared
+      runner, one ordered workload, one runner-side measurement point, and no
+      provider-specific benchmark semantics beyond documented parity
+      exceptions.
+- [ ] **Reproducibility preserved**: runtime and SDK pins, workload version and
+      hash, schema versions, provider descriptors, canonical regions, and run
+      metadata are explicitly defined or updated.
+- [ ] **Contract-first delivery preserved**: OpenAPI and JSON Schema changes are
+      authored before implementation tasks and reflected in validation work.
+- [ ] **Parity exceptions made explicit**: any caveat that affects comparability
+      is documented in the spec, plan, tasks, and operator-facing docs.
+- [ ] **Minimal v1 scope preserved**: exactly four providers, sequential
+      execution, fixed payload catalog, unauthenticated endpoints, and no new
+      benchmark services or experiments unless justified in Complexity
+      Tracking.
 
 ## Project Structure
 
