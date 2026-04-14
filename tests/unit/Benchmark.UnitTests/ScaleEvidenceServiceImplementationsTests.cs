@@ -34,7 +34,7 @@ public sealed class ScaleEvidenceServiceImplementationsTests
             DisplayName = providerId,
             Region = "test-region",
             BaseUrl = "https://example.test",
-            RuntimeVersion = "8.0.14",
+            RuntimeVersion = "10.0.5",
             StartupPath = "/api/startup",
             ComputePath = "/api/compute/matrix",
             IdleWindowMinutes = 15,

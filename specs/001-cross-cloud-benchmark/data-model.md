@@ -16,7 +16,7 @@ Represents one benchmark target deployment for one provider in one region.
 | `displayName` | string | yes | Human-readable provider name |
 | `region` | string | yes | Single documented region for v1 (`europe-west1`, `eu-west-1`, `westeurope`, or `fr-par`) |
 | `baseUrl` | string (uri) | yes | Provider-specific base URL targeted by the runner |
-| `runtimeVersion` | string | yes | Must match ASP.NET Core runtime `8.0.14` across all four providers |
+| `runtimeVersion` | string | yes | Must match ASP.NET Core runtime `10.0.5` across all four providers |
 | `startupPath` | string | yes | Must equal `/api/startup` |
 | `computePath` | string | yes | Must equal `/api/compute/matrix` |
 | `idleWindowMinutes` | integer | yes | Fixed at `15` in v1 |
@@ -26,7 +26,7 @@ Represents one benchmark target deployment for one provider in one region.
 
 **Validation rules**
 - `providerId` must be one of the fixed four v1 providers.
-- `runtimeVersion` must equal `8.0.14` across all deployments.
+- `runtimeVersion` must equal `10.0.5` across all deployments.
 - `region` must match the canonical map for the selected `providerId`.
 - `idleWindowMinutes` must equal `15`.
 - `startupPath` and `computePath` must be identical for all providers.

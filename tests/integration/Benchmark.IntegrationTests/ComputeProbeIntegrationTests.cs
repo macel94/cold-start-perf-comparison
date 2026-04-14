@@ -58,7 +58,7 @@ public sealed class ComputeProbeIntegrationTests
             DisplayName = "GCP Cloud Run",
             Region = "europe-west1",
             BaseUrl = "https://example.test",
-            RuntimeVersion = "8.0.14",
+            RuntimeVersion = "10.0.5",
             StartupPath = "/api/startup",
             ComputePath = "/api/compute/matrix",
             IdleWindowMinutes = 15,

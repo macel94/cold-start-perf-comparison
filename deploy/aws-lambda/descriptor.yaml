@@ -1,7 +1,7 @@
 providerId: aws-lambda
 displayName: AWS Lambda
 region: eu-west-1
-runtimeVersion: 8.0.14
+runtimeVersion: 10.0.5
 startupPath: /api/startup
 computePath: /api/compute/matrix
 idleWindowMinutes: 15

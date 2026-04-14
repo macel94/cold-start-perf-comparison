@@ -14,7 +14,7 @@ public sealed class ProviderDescriptorContractTests
         var descriptor = File.ReadAllText(Path.Combine(RepoRoot, "deploy", folder, "descriptor.yaml"));
 
         Assert.Contains($"region: {region}", descriptor);
-        Assert.Contains("runtimeVersion: 8.0.14", descriptor);
+        Assert.Contains("runtimeVersion: 10.0.5", descriptor);
         Assert.Contains("startupPath: /api/startup", descriptor);
         Assert.Contains("computePath: /api/compute/matrix", descriptor);
         Assert.Contains("idleWindowMinutes: 15", descriptor);

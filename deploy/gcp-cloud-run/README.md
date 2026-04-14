@@ -1,7 +1,7 @@
 # GCP Cloud Run Deployment
 
 - Region: `europe-west1`
-- Runtime baseline: ASP.NET Core `8.0.14`
+- Runtime baseline: ASP.NET Core `10.0.5`
 - Warm-start optimization disabled: `minScale: 0`
 - Benchmark paths: `GET /api/startup`, `POST /api/compute/matrix`
 

@@ -1,6 +1,6 @@
 # cold-start-perf-comparison
 
-Cross-cloud .NET 8 cold-start benchmark for:
+Cross-cloud .NET 10 cold-start benchmark for:
 
 - GCP Cloud Run (`europe-west1`)
 - AWS Lambda (`eu-west-1`)
@@ -32,8 +32,8 @@ tests/
 
 ## Toolchain
 
-- .NET SDK pin: `8.0.408` (roll-forward allowed within feature band)
-- Runtime baseline: ASP.NET Core `8.0.14`
+- .NET SDK pin: `10.0.201` (roll-forward allowed within feature band)
+- Runtime baseline: ASP.NET Core `10.0.5`
 
 ## Build and test
 

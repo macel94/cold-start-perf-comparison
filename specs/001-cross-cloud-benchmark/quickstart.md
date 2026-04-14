@@ -19,7 +19,7 @@ This quickstart is the operator-facing path for deploying one provider and runni
 - Provider set is fixed: GCP Cloud Run, AWS Lambda-hosted ASP.NET endpoint, Azure Container Apps, Scaleway Serverless Containers.
 - Provider regions are fixed for v1: GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, Scaleway=`fr-par`.
 - Use one shared .NET benchmark app contract.
-- Pin ASP.NET Core runtime `8.0.14` and .NET SDK `8.0.408`.
+- Pin ASP.NET Core runtime `10.0.5` and .NET SDK `10.0.201`.
 - Use one workload definition and one sequential runner.
 - Record workload version, benchmark app contract version, and result schema version in every benchmark run envelope.
 - Apply the same 15-minute idle window before every cold step.
@@ -59,7 +59,7 @@ This quickstart is the operator-facing path for deploying one provider and runni
    Follow the provider README in the matching `deploy/` directory and keep:
 
    - region fixed to the descriptor value
-   - runtime fixed to `8.0.14`
+   - runtime fixed to `10.0.5`
    - startup path fixed to `GET /api/startup`
    - compute path fixed to `POST /api/compute/matrix`
 

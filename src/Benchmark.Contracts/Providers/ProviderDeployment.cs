@@ -6,7 +6,7 @@ public sealed record ProviderDeployment
     public string DisplayName { get; init; } = string.Empty;
     public string Region { get; init; } = string.Empty;
     public string BaseUrl { get; init; } = string.Empty;
-    public string RuntimeVersion { get; init; } = "8.0.14";
+    public string RuntimeVersion { get; init; } = "10.0.5";
     public string StartupPath { get; init; } = "/api/startup";
     public string ComputePath { get; init; } = "/api/compute/matrix";
     public int IdleWindowMinutes { get; init; } = 15;

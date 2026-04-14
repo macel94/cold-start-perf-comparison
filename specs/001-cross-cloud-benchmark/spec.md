@@ -104,7 +104,7 @@ A third-party reviewer wants to independently reproduce the benchmark by followi
 - **FR-004**: Every benchmark app MUST expose a lightweight startup/readiness endpoint that returns a success response with minimal compute overhead, used as the cold-start probe target.
 - **FR-005**: Every benchmark app MUST expose a POST endpoint that accepts a fixed matrix multiplication payload and returns the computation result, used as the compute probe target.
 - **FR-006**: All four benchmark apps MUST expose endpoints at the same URL path structure so the benchmark runner can target any provider by changing only the base URL.
-- **FR-007**: The .NET runtime version used MUST be identical across all four provider deployments; the exact v1 baseline is ASP.NET Core runtime `8.0.14`, built with .NET SDK `8.0.408`, and any later change MUST be versioned and documented before benchmark results are published.
+- **FR-007**: The .NET runtime version used MUST be identical across all four provider deployments; the exact v1 baseline is ASP.NET Core runtime `10.0.5`, built with .NET SDK `10.0.201`, and any later change MUST be versioned and documented before benchmark results are published.
 
 **Workload Definition**
 
@@ -173,4 +173,4 @@ A third-party reviewer wants to independently reproduce the benchmark by followi
 - **A-008**: Each provider's billing and resource configuration for the benchmark app is documented but is not standardised to be cost-equivalent; the comparison is on measured latency, not cost.
 - **A-009**: The benchmark is a developer/research tool; it does not require authentication, authorisation, or access control for the benchmark endpoints in v1.
 - **A-010**: Platform-level cold-start optimisations (e.g., provisioned concurrency, min-instances) are disabled or not configured for the benchmark deployments, to measure baseline cold-start behaviour.
-- **A-011**: The exact v1 runtime/toolchain baseline is ASP.NET Core runtime `8.0.14` with .NET SDK `8.0.408`, pinned in repository configuration and mirrored in deployment manifests.
+- **A-011**: The exact v1 runtime/toolchain baseline is ASP.NET Core runtime `10.0.5` with .NET SDK `10.0.201`, pinned in repository configuration and mirrored in deployment manifests.

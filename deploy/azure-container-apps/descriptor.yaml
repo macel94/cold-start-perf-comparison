@@ -1,7 +1,7 @@
 providerId: azure-container-apps
 displayName: Azure Container Apps
 region: westeurope
-runtimeVersion: 8.0.14
+runtimeVersion: 10.0.5
 startupPath: /api/startup
 computePath: /api/compute/matrix
 idleWindowMinutes: 15

@@ -23,7 +23,7 @@
 ## v1 Guardrails (Keep Visible During Implementation)
 
 - Exactly four providers only: GCP Cloud Run, AWS Lambda, Azure Container Apps, Scaleway Serverless Containers
-- One shared `.NET 8` benchmark app plus one thin AWS Lambda host shim
+- One shared `.NET 10` benchmark app plus one thin AWS Lambda host shim
 - One shared runner in `src/BenchmarkRunner/`
 - Sequential execution only in v1; no parallel request dispatch
 - Enforce the same 15-minute idle window before every `intent: cold` step
@@ -36,7 +36,7 @@
 
 **Purpose**: Scaffold the nearly empty repository into the planned .NET solution and test layout.
 
-- [X] T001 Create the root solution and pin .NET SDK `8.0.408` in `cold-start-perf-comparison.sln` and `global.json`
+- [X] T001 Create the root solution and pin .NET SDK `10.0.201` in `cold-start-perf-comparison.sln` and `global.json`
 - [X] T002 [P] Scaffold production projects in `src/Benchmark.Contracts/Benchmark.Contracts.csproj`, `src/BenchmarkApp/BenchmarkApp.csproj`, `src/BenchmarkRunner/BenchmarkRunner.csproj`, and `src/BenchmarkApp.AwsLambdaHost/BenchmarkApp.AwsLambdaHost.csproj`
 - [X] T003 [P] Scaffold xUnit test projects in `tests/contract/Benchmark.ContractTests/Benchmark.ContractTests.csproj`, `tests/integration/Benchmark.IntegrationTests/Benchmark.IntegrationTests.csproj`, and `tests/unit/Benchmark.UnitTests/Benchmark.UnitTests.csproj`
 - [X] T004 [P] Add centralized package and build configuration in `Directory.Build.props` and `Directory.Packages.props`
@@ -146,7 +146,7 @@
 - [X] T035 [US4] Add the thin AWS Lambda host shim over the shared app in `src/BenchmarkApp.AwsLambdaHost/Program.cs` and `src/BenchmarkApp.AwsLambdaHost/LambdaEntryPoint.cs`
 - [X] T036 [P] [US4] Create GCP Cloud Run and Azure Container Apps native deployment manifests plus operator notes alongside the benchmark descriptors in `deploy/gcp-cloud-run/service.yaml`, `deploy/gcp-cloud-run/README.md`, `deploy/azure-container-apps/containerapp.yaml`, and `deploy/azure-container-apps/README.md`
 - [X] T037 [P] [US4] Create AWS Lambda and Scaleway native deployment manifests plus operator notes alongside the benchmark descriptors in `deploy/aws-lambda/template.yaml`, `deploy/aws-lambda/README.md`, `deploy/scaleway-serverless/container.yaml`, and `deploy/scaleway-serverless/README.md`
-- [X] T038 [US4] Document the canonical provider regions, runtime/toolchain pin (`8.0.14` / `8.0.408`), disabled warm-start optimizations, resource settings, deployment steps, and end-to-end run instructions in `README.md` and `specs/001-cross-cloud-benchmark/quickstart.md`
+- [X] T038 [US4] Document the canonical provider regions, runtime/toolchain pin (`10.0.5` / `10.0.201`), disabled warm-start optimizations, resource settings, deployment steps, and end-to-end run instructions in `README.md` and `specs/001-cross-cloud-benchmark/quickstart.md`
 
 **Checkpoint**: User Story 4 makes the benchmark reproducible from repository documentation and deployment assets alone.
 

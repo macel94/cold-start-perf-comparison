@@ -5,8 +5,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: benchmark-app
-      Runtime: dotnet8
-      CodeUri: ../../src/BenchmarkApp.AwsLambdaHost/bin/Release/net8.0/publish/
+      Runtime: dotnet10
+      CodeUri: ../../src/BenchmarkApp.AwsLambdaHost/bin/Release/net10.0/publish/
       Handler: BenchmarkApp.AwsLambdaHost
       MemorySize: 1024
       Timeout: 30

@@ -1,7 +1,7 @@
 # AWS Lambda Deployment
 
 - Region: `eu-west-1`
-- Runtime baseline: ASP.NET Core `8.0.14`
+- Runtime baseline: ASP.NET Core `10.0.5`
 - Warm-start optimization disabled: provisioned concurrency must remain unset
 - Benchmark paths: `GET /api/startup`, `POST /api/compute/matrix`
 

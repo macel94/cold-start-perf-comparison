@@ -1,9 +1,9 @@
 # Research: Cross-Cloud .NET Cold-Start Performance Benchmark
 
-## Decision 1: Standardize on ASP.NET Core runtime 8.0.14 built with .NET SDK 8.0.408
+## Decision 1: Standardize on ASP.NET Core runtime 10.0.5 built with .NET SDK 10.0.201
 
-- **Decision**: Use ASP.NET Core runtime `8.0.14` with .NET SDK `8.0.408` as the common runtime baseline for the shared benchmark app, runner, and AWS host adapter.
-- **Rationale**: This pins an exact, reproducible runtime/toolchain combination while staying within the .NET 8 LTS family that is broadly supported across container-based serverless platforms and AWS Lambda in 2026. It also keeps the benchmark fair by using the same runtime family everywhere.
+- **Decision**: Use ASP.NET Core runtime `10.0.5` with .NET SDK `10.0.201` as the common runtime baseline for the shared benchmark app, runner, and AWS host adapter.
+- **Rationale**: This pins an exact, reproducible runtime/toolchain combination while staying within the .NET 10 family that is broadly supported across container-based serverless platforms and AWS Lambda in 2026. It also keeps the benchmark fair by using the same runtime family everywhere.
 - **Alternatives considered**:
   - **.NET 10 LTS**: rejected for v1 because provider rollout timing may vary during 2026.
   - **.NET 9 STS**: rejected because it shortens support life and adds upgrade churn during the benchmark project.
