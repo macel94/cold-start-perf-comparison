@@ -9,14 +9,15 @@ Auto-generated from all feature plans. Last updated: 2026-04-14
 ## Project Structure
 
 ```text
-backend/
-frontend/
+src/
+deploy/
+workloads/
 tests/
 ```
 
 ## Commands
 
-# Add commands for C# / .NET 8 LTS for app, hosting adapters, and runner
+- `dotnet test`
 
 ## Code Style
 

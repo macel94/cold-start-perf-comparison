@@ -18,7 +18,9 @@ This quickstart is for the next implementation phase. The repository is still pl
 ## v1 Non-Negotiables
 
 - Provider set is fixed: GCP Cloud Run, AWS Lambda-hosted ASP.NET endpoint, Azure Container Apps, Scaleway Serverless Containers.
+- Provider regions are fixed for v1: GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, Scaleway=`fr-par`.
 - Use one shared .NET benchmark app contract.
+- Pin ASP.NET Core runtime `8.0.14` and .NET SDK `8.0.408`.
 - Use one workload definition and one sequential runner.
 - Apply the same 15-minute idle window before every cold step.
 - Use only the `100x100` and `200x200` payloads.
@@ -40,12 +42,13 @@ This quickstart is for the next implementation phase. The repository is still pl
    - Ensure endpoint paths stay exactly:
      - `GET /api/startup`
      - `POST /api/compute/matrix`
-   - Keep workload/result shapes backward-compatible with the approved v1 contracts.
+    - Keep workload/result shapes backward-compatible with the approved v1 contracts.
+    - Enforce unique workload step IDs, contiguous sequence numbers, and the fixed two-entry payload catalog in the custom workload validator as well as in schema-level checks.
 
 4. **Create the first workload artifact**
-   - Add `workloads/v1/cross-cloud-sequential.json`.
-   - Include exactly two payload catalog entries: `matrix-100x100` and `matrix-200x200`.
-   - Encode the ordered cold/warm steps explicitly; do not derive them dynamically.
+    - Add `workloads/v1/cross-cloud-sequential.json`.
+    - Include exactly two payload catalog entries: `matrix-100x100` and `matrix-200x200`.
+    - Encode the ordered cold/warm steps explicitly, including compute steps from the start; do not derive them dynamically.
 
 5. **Implement runner orchestration**
    - Read the workload file.
@@ -82,6 +85,7 @@ This quickstart is for the next implementation phase. The repository is still pl
 
 ### Milestone 3: Provider packaging
 
+- Benchmark metadata descriptors added for all four providers
 - Cloud Run container deployment path added
 - Azure Container Apps deployment path added
 - Scaleway Serverless Containers deployment path added
@@ -90,7 +94,7 @@ This quickstart is for the next implementation phase. The repository is still pl
 ### Milestone 4: Benchmark reproducibility
 
 - Provider configuration docs written
-- One-region-per-provider values documented
+- One-region-per-provider values documented exactly as GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, Scaleway=`fr-par`
 - Reproducible run captured with summary metrics and parity annotations
 
 ## Definition of Done for the first implementation slice

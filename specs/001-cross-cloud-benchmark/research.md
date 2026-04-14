@@ -1,9 +1,9 @@
 # Research: Cross-Cloud .NET Cold-Start Performance Benchmark
 
-## Decision 1: Standardize on .NET 8 LTS
+## Decision 1: Standardize on ASP.NET Core runtime 8.0.14 built with .NET SDK 8.0.408
 
-- **Decision**: Use .NET 8 LTS as the common runtime baseline for the shared benchmark app, runner, and AWS host adapter.
-- **Rationale**: .NET 8 is the stable lowest-risk choice that is broadly supported across container-based serverless platforms and AWS Lambda in 2026, while avoiding short-term support churn. It also keeps the benchmark fair by using the same runtime family everywhere.
+- **Decision**: Use ASP.NET Core runtime `8.0.14` with .NET SDK `8.0.408` as the common runtime baseline for the shared benchmark app, runner, and AWS host adapter.
+- **Rationale**: This pins an exact, reproducible runtime/toolchain combination while staying within the .NET 8 LTS family that is broadly supported across container-based serverless platforms and AWS Lambda in 2026. It also keeps the benchmark fair by using the same runtime family everywhere.
 - **Alternatives considered**:
   - **.NET 10 LTS**: rejected for v1 because provider rollout timing may vary during 2026.
   - **.NET 9 STS**: rejected because it shortens support life and adds upgrade churn during the benchmark project.
@@ -70,3 +70,11 @@
 - **Rationale**: xUnit is the default, well-supported testing approach in modern .NET projects and works well for CLI, HTTP, and schema-validation scenarios. It keeps the future implementation aligned with the selected .NET stack without introducing extra test runners.
 - **Alternatives considered**:
   - **NUnit or MSTest**: rejected because they offer no clear benchmark-specific advantage here.
+
+## Decision 10: Fix one European region-aligned location per provider
+
+- **Decision**: Use `europe-west1` for GCP Cloud Run, `eu-west-1` for AWS Lambda, `westeurope` for Azure Container Apps, and `fr-par` for Scaleway Serverless Containers.
+- **Rationale**: A Europe-centered region map reduces transcontinental variance, aligns naturally with the inclusion of a European provider, and gives one explicit canonical location per platform for reproducible v1 runs.
+- **Alternatives considered**:
+  - **Provider-default regions**: rejected because they would drift geographically and weaken comparability.
+  - **Multiple regions per provider**: rejected because multi-region comparison is out of scope for v1.

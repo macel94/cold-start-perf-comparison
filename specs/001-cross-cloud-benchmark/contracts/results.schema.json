@@ -100,8 +100,7 @@
         "completedAtUtc",
         "latencyMs",
         "httpStatus",
-        "correctness",
-        "scaleToZeroConfirmed"
+        "correctness"
       ],
       "properties": {
         "runId": {
@@ -186,7 +185,23 @@
             "type": "string"
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "intent": {
+                "const": "cold"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "scaleToZeroConfirmed"
+            ]
+          }
+        }
+      ]
     },
     "parityException": {
       "type": "object",

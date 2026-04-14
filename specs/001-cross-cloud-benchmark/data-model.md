@@ -14,9 +14,9 @@ Represents one benchmark target deployment for one provider in one region.
 |------|------|----------|------|
 | `providerId` | string | yes | Fixed enum: `gcp-cloud-run`, `aws-lambda`, `azure-container-apps`, `scaleway-serverless-containers` |
 | `displayName` | string | yes | Human-readable provider name |
-| `region` | string | yes | Single documented region for v1 |
+| `region` | string | yes | Single documented region for v1 (`europe-west1`, `eu-west-1`, `westeurope`, or `fr-par`) |
 | `baseUrl` | string (uri) | yes | Provider-specific base URL targeted by the runner |
-| `runtimeVersion` | string | yes | Must match `.NET 8` across all four providers |
+| `runtimeVersion` | string | yes | Must match ASP.NET Core runtime `8.0.14` across all four providers |
 | `startupPath` | string | yes | Must equal `/api/startup` |
 | `computePath` | string | yes | Must equal `/api/compute/matrix` |
 | `idleWindowMinutes` | integer | yes | Fixed at `15` in v1 |
@@ -26,7 +26,8 @@ Represents one benchmark target deployment for one provider in one region.
 
 **Validation rules**
 - `providerId` must be one of the fixed four v1 providers.
-- `runtimeVersion` must match the same configured version across all deployments.
+- `runtimeVersion` must equal `8.0.14` across all deployments.
+- `region` must match the canonical map for the selected `providerId`.
 - `idleWindowMinutes` must equal `15`.
 - `startupPath` and `computePath` must be identical for all providers.
 
@@ -55,7 +56,7 @@ Represents the versioned ordered workload file used by the runner.
 |------|------|----------|------|
 | `workloadVersion` | string | yes | Semantic or date-based version identifier |
 | `description` | string | yes | Human-readable description |
-| `payloadCatalog` | array[PayloadDefinition] | yes | Fixed catalog shared across all steps |
+| `payloadCatalog` | array[PayloadDefinition] | yes | Fixed catalog shared across all steps and containing exactly `matrix-100x100` then `matrix-200x200` in v1 |
 | `steps` | array[WorkloadStep] | yes | Ordered execution list |
 
 **Validation rules**
@@ -63,6 +64,7 @@ Represents the versioned ordered workload file used by the runner.
 - Step order is authoritative and must not be altered by the runner.
 - Payload definitions referenced by steps must exist in `payloadCatalog`.
 - The runner computes the workload file hash from the serialized workload artifact and records it in `BenchmarkRun.workloadFileHash`; it is not authored inside the workload file itself.
+- JSON Schema enforces payload shape; custom validation also enforces the exact payload ID set, unique `stepId` values, and contiguous `sequence` numbering.
 
 ### 4. WorkloadStep
 
@@ -125,14 +127,15 @@ Represents one measured outcome for one step against one provider.
 | `responseBody` | object | no | Normalized response payload capture |
 | `errorType` | string | no | Timeout, HTTP error, schema mismatch, etc. |
 | `errorDetail` | string | no | Human-readable failure detail |
-| `scaleToZeroConfirmed` | boolean | yes | Whether a zero-state signal was confirmed before the request |
+| `scaleToZeroConfirmed` | boolean | conditional | Required for `intent: cold`; omitted for `intent: warm` |
 | `annotationRefs` | array[string] | no | Links to parity exception IDs |
 
 **Validation rules**
 - `latencyMs` must be non-negative.
 - Startup records should use `correctness: not-applicable`.
 - Compute records must set `correctness` based on matrix result validation.
-- `scaleToZeroConfirmed` may be `false` for cold steps when paired with a parity exception.
+- `scaleToZeroConfirmed` is required for cold steps and may be `false` when paired with a parity exception.
+- Warm-step records omit `scaleToZeroConfirmed`.
 
 ### 7. ParityException
 
