@@ -33,16 +33,14 @@ resource "azurerm_container_app" "benchmark" {
   tags                         = var.tags
 
   template {
+    min_replicas = 0
+    max_replicas = 1
+
     container {
       name   = var.container_app_name
       image  = var.image
       cpu    = 1.0
       memory = "2Gi"
-    }
-
-    scale {
-      min_replicas = 0
-      max_replicas = 1
     }
   }
 

@@ -32,11 +32,11 @@ resource "aws_iam_role_policy_attachment" "basic_execution" {
 }
 
 resource "aws_lambda_function" "benchmark" {
-  function_name = var.function_name
-  role          = aws_iam_role.lambda_execution.arn
-  runtime       = "dotnet10"
-  handler       = "BenchmarkApp.AwsLambdaHost"
-  filename      = data.archive_file.lambda_package.output_path
+  function_name    = var.function_name
+  role             = aws_iam_role.lambda_execution.arn
+  runtime          = "dotnet10"
+  handler          = "BenchmarkApp.AwsLambdaHost"
+  filename         = data.archive_file.lambda_package.output_path
   source_code_hash = data.archive_file.lambda_package.output_base64sha256
   publish          = true
   memory_size      = var.memory_size_mb

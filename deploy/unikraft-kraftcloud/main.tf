@@ -1,8 +1,8 @@
-provider "ukc" {}
+provider "ukc" {
+  metro = var.metro
+}
 
 resource "ukc_instance" "benchmark" {
-  name      = var.instance_name
-  metro     = var.metro
   image     = var.image
   memory_mb = var.memory_mb
   autostart = true

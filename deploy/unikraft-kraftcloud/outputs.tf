@@ -1,6 +1,6 @@
-output "instance_name" {
-  description = "KraftCloud instance name."
-  value       = ukc_instance.benchmark.name
+output "instance_uuid" {
+  description = "KraftCloud instance UUID."
+  value       = ukc_instance.benchmark.uuid
 }
 
 output "service_url" {

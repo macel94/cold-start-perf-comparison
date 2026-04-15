@@ -1,9 +1,3 @@
-variable "instance_name" {
-  description = "KraftCloud instance name."
-  type        = string
-  default     = "benchmark-app"
-}
-
 variable "metro" {
   description = "Canonical v1 KraftCloud metro."
   type        = string

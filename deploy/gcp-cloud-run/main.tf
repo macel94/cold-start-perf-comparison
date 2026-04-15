@@ -11,7 +11,7 @@ resource "google_cloud_run_v2_service" "benchmark" {
   labels              = var.labels
 
   template {
-    timeout                           = "30s"
+    timeout                          = "30s"
     max_instance_request_concurrency = 1
 
     scaling {
@@ -35,10 +35,6 @@ resource "google_cloud_run_v2_service" "benchmark" {
     }
   }
 
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
 }
 
 resource "google_cloud_run_v2_service_iam_member" "unauthenticated_invoker" {
