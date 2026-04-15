@@ -5,18 +5,18 @@
 
 ## Summary
 
-Deliver a planning-first foundation for a reproducible v1 benchmark that compares cold-start and warm compute latency for the fixed provider set of GCP Cloud Run, AWS Lambda-hosted ASP.NET, Azure Container Apps, and Scaleway Serverless Containers. The implementation will use one shared ASP.NET Core runtime `8.0.14` benchmark app contract built with .NET SDK `8.0.408`, one ordered workload definition, and one sequential benchmark runner that enforces a uniform 15-minute idle window before cold probes, uses only the fixed 100x100 and 200x200 matrix payloads, and produces normalized result records plus p50/p95/p99/min/max summaries.
+Deliver a planning-first foundation for a reproducible v1 benchmark that compares cold-start and warm compute latency for the fixed provider set of GCP Cloud Run, AWS Lambda-hosted ASP.NET, Azure Container Apps, Scaleway Serverless Containers, and Unikraft/KraftCloud. The implementation will use one shared ASP.NET Core runtime `10.0.5` benchmark app contract built with .NET SDK `10.0.201`, one ordered workload definition, and one sequential benchmark runner that enforces a uniform 15-minute idle window before cold probes, uses only the fixed 100x100 and 200x200 matrix payloads, and produces normalized result records plus p50/p95/p99/min/max summaries.
 
 ## Technical Context
 
-**Language/Version**: C# with ASP.NET Core runtime `8.0.14` and .NET SDK `8.0.408`  
+**Language/Version**: C# with ASP.NET Core runtime `10.0.5` and .NET SDK `10.0.201`  
 **Primary Dependencies**: ASP.NET Core Minimal API, System.Text.Json, HttpClient, xUnit, FluentAssertions, Amazon.Lambda.AspNetCoreServer (AWS host adapter only), provider CLI/API integrations for deployment-state checks  
 **Storage**: Versioned JSON/YAML contracts in repo; benchmark outputs written as structured JSON files; no database in v1  
 **Testing**: xUnit for unit/integration/contract tests; schema validation tests for workload and results; doc-driven smoke tests for reproducibility  
-**Target Platform**: Linux-based .NET workloads deployed to Cloud Run (`europe-west1`), AWS Lambda HTTP endpoint (`eu-west-1`), Azure Container Apps (`westeurope`), and Scaleway Serverless Containers (`fr-par`); single operator-run CLI from a stable workstation/runner host  
+**Target Platform**: Linux-based .NET workloads deployed to Cloud Run (`europe-west1`), AWS Lambda HTTP endpoint (`eu-west-1`), Azure Container Apps (`westeurope`), Scaleway Serverless Containers (`fr-par`), and Unikraft/KraftCloud (`fra`); single operator-run CLI from a stable workstation/runner host  
 **Project Type**: CLI + web-service benchmark harness with deployment configuration and documentation  
-**Performance Goals**: Capture reproducible end-to-end latency for cold and warm intents across all four providers; emit per-provider/per-intent p50/p95/p99/min/max summaries and correctness outcomes for each step  
-**Constraints**: Exactly four providers; one benchmark app contract; one workload file version per session; explicit benchmark app contract and result schema versions recorded in run metadata; sequential execution only; 15-minute uniform idle window before every cold step; payload catalog fixed to 100x100 and 200x200 matrices; identical URL path structure; no auth in v1; parity exceptions recorded instead of failing the run; runtime/toolchain pinned to ASP.NET Core `8.0.14` and SDK `8.0.408`; regions fixed to `europe-west1`, `eu-west-1`, `westeurope`, and `fr-par`  
+**Performance Goals**: Capture reproducible end-to-end latency for cold and warm intents across all five providers; emit per-provider/per-intent p50/p95/p99/min/max summaries and correctness outcomes for each step  
+**Constraints**: Exactly five providers; one benchmark app contract; one workload file version per session; explicit benchmark app contract and result schema versions recorded in run metadata; sequential execution only; 15-minute uniform idle window before every cold step; payload catalog fixed to 100x100 and 200x200 matrices; identical URL path structure; no auth in v1; parity exceptions recorded instead of failing the run; runtime/toolchain pinned to ASP.NET Core `10.0.5` and SDK `10.0.201`; regions fixed to `europe-west1`, `eu-west-1`, `westeurope`, `fr-par`, and `fra`  
 **Scale/Scope**: Planning-first repository; initial deliverables are design artifacts, contracts, and repository structure for one shared app, one AWS-specific host shim, one runner, fixed deployment descriptors, and test scaffolding
 
 ## Constitution Check
@@ -33,7 +33,7 @@ The constitution is ratified at `.specify/memory/constitution.md` version `1.0.0
   - Runtime/toolchain pins, workload/version pins, and canonical provider regions are explicitly documented.
   - Contracts are defined before implementation in OpenAPI and JSON Schema artifacts.
   - Provider-specific behavior is limited to packaging/evidence collection and is documented as parity metadata instead of benchmark-semantic drift.
-  - Scope remains within the approved v1 boundaries of four providers, two payload sizes, sequential execution, and no auth.
+  - Scope remains within the approved v1 boundaries of five providers, two payload sizes, sequential execution, and no auth.
 - **Planning guardrails applied anyway**:
   - Keep scope tightly aligned with the approved spec.
   - Prefer the smallest viable structure because the repository is nearly empty.
@@ -75,7 +75,8 @@ deploy/
 ├── gcp-cloud-run/
 ├── aws-lambda/
 ├── azure-container-apps/
-└── scaleway-serverless/
+├── scaleway-serverless/
+└── unikraft-kraftcloud/
 
 workloads/
 └── v1/
@@ -91,7 +92,7 @@ tests/
 
 ## Phase 0 Research Summary
 
-- Common runtime selected: **ASP.NET Core runtime `8.0.14` built with .NET SDK `8.0.408`** for widest stable support across all four providers in 2026.
+- Common runtime selected: **ASP.NET Core runtime `10.0.5` built with .NET SDK `10.0.201`** for widest stable support across all five providers in 2026.
 - HTTP benchmark app contract selected: **ASP.NET Core Minimal API** with identical `/api/startup` and `/api/compute/matrix` paths on every provider.
 - AWS hosting pattern selected: **shared ASP.NET app + Amazon.Lambda.AspNetCoreServer adapter** behind a single HTTP entry point.
 - Workload/result contract strategy selected: **OpenAPI for HTTP endpoints + JSON Schema for workload/results**.
@@ -101,10 +102,11 @@ tests/
 
 | Provider | Deployment Target | Region | Runtime Baseline |
 |----------|-------------------|--------|------------------|
-| GCP | Cloud Run | `europe-west1` | ASP.NET Core `8.0.14` |
-| AWS | Lambda-hosted ASP.NET endpoint | `eu-west-1` | ASP.NET Core `8.0.14` |
-| Azure | Container Apps | `westeurope` | ASP.NET Core `8.0.14` |
-| Scaleway | Serverless Containers | `fr-par` | ASP.NET Core `8.0.14` |
+| GCP | Cloud Run | `europe-west1` | ASP.NET Core `10.0.5` |
+| AWS | Lambda-hosted ASP.NET endpoint | `eu-west-1` | ASP.NET Core `10.0.5` |
+| Azure | Container Apps | `westeurope` | ASP.NET Core `10.0.5` |
+| Scaleway | Serverless Containers | `fr-par` | ASP.NET Core `10.0.5` |
+| Unikraft | KraftCloud | `fra` | ASP.NET Core `10.0.5` |
 
 ## Phase 1 Design Summary
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The v1 model centers on one versioned workload, one shared payload catalog, four fixed provider deployments, and one normalized run envelope that stores raw step results, parity exceptions, and summary metrics.
+The v1 model centers on one versioned workload, one shared payload catalog, five fixed provider deployments, and one normalized run envelope that stores raw step results, parity exceptions, and summary metrics.
 
 ## Entities
 
@@ -12,11 +12,11 @@ Represents one benchmark target deployment for one provider in one region.
 
 | Field | Type | Required | Notes |
 |------|------|----------|------|
-| `providerId` | string | yes | Fixed enum: `gcp-cloud-run`, `aws-lambda`, `azure-container-apps`, `scaleway-serverless-containers` |
+| `providerId` | string | yes | Fixed enum: `gcp-cloud-run`, `aws-lambda`, `azure-container-apps`, `scaleway-serverless-containers`, `unikraft-kraftcloud` |
 | `displayName` | string | yes | Human-readable provider name |
-| `region` | string | yes | Single documented region for v1 (`europe-west1`, `eu-west-1`, `westeurope`, or `fr-par`) |
+| `region` | string | yes | Single documented region for v1 (`europe-west1`, `eu-west-1`, `westeurope`, `fr-par`, or `fra`) |
 | `baseUrl` | string (uri) | yes | Provider-specific base URL targeted by the runner |
-| `runtimeVersion` | string | yes | Must match ASP.NET Core runtime `8.0.14` across all four providers |
+| `runtimeVersion` | string | yes | Must match ASP.NET Core runtime `10.0.5` across all five providers |
 | `startupPath` | string | yes | Must equal `/api/startup` |
 | `computePath` | string | yes | Must equal `/api/compute/matrix` |
 | `idleWindowMinutes` | integer | yes | Fixed at `15` in v1 |
@@ -25,8 +25,8 @@ Represents one benchmark target deployment for one provider in one region.
 | `parityNotes` | array[string] | no | Known caveats documented before runs |
 
 **Validation rules**
-- `providerId` must be one of the fixed four v1 providers.
-- `runtimeVersion` must equal `8.0.14` across all deployments.
+- `providerId` must be one of the fixed five v1 providers.
+- `runtimeVersion` must equal `10.0.5` across all deployments.
 - `region` must match the canonical map for the selected `providerId`.
 - `idleWindowMinutes` must equal `15`.
 - `startupPath` and `computePath` must be identical for all providers.

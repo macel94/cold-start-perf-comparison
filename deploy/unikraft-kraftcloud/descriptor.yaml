@@ -1,0 +1,15 @@
+providerId: unikraft-kraftcloud
+displayName: Unikraft/KraftCloud
+region: fra
+runtimeVersion: 10.0.5
+startupPath: /api/startup
+computePath: /api/compute/matrix
+idleWindowMinutes: 15
+supportsDeterministicScaleToZeroConfirmation: true
+scaleToZeroEvidenceStrategy: KraftCloud scale-to-zero standby and instance state evidence
+disabledWarmStartOptimizations:
+  - stateful scale-to-zero snapshots
+resourceSettings:
+  cpu: "1"
+  memory: 512Mi
+parityNotes: []

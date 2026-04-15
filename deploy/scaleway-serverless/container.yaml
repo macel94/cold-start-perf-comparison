@@ -1,0 +1,9 @@
+name: benchmark-app
+namespace: benchmark
+region: fr-par
+minScale: 0
+maxScale: 1
+port: 8080
+cpuLimit: 1000m
+memoryLimit: 1024Mi
+image: rg.fr-par.scw.cloud/example/cold-start-perf-comparison:latest

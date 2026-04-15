@@ -1,0 +1,27 @@
+# Build outputs
+bin/
+obj/
+artifacts/
+TestResults/
+coverage/
+publish/
+
+# .NET
+*.user
+*.rsuser
+*.suo
+
+# Benchmark outputs
+benchmark-results/
+
+# Workstation/editor
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.idea/
+.vscode/
+
+# Logs and environment
+*.log
+.env*

@@ -56,7 +56,8 @@
           "gcp-cloud-run",
           "aws-lambda",
           "azure-container-apps",
-          "scaleway-serverless-containers"
+          "scaleway-serverless-containers",
+          "unikraft-kraftcloud"
         ]
       }
     },
@@ -123,7 +124,8 @@
             "gcp-cloud-run",
             "aws-lambda",
             "azure-container-apps",
-            "scaleway-serverless-containers"
+            "scaleway-serverless-containers",
+            "unikraft-kraftcloud"
           ]
         },
         "region": {
@@ -364,7 +366,8 @@
             "gcp-cloud-run",
             "aws-lambda",
             "azure-container-apps",
-            "scaleway-serverless-containers"
+            "scaleway-serverless-containers",
+            "unikraft-kraftcloud"
           ]
         },
         "scope": {
@@ -418,7 +421,8 @@
             "gcp-cloud-run",
             "aws-lambda",
             "azure-container-apps",
-            "scaleway-serverless-containers"
+            "scaleway-serverless-containers",
+            "unikraft-kraftcloud"
           ]
         },
         "intent": {

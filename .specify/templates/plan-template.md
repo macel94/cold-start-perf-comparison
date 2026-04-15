@@ -42,7 +42,7 @@
       authored before implementation tasks and reflected in validation work.
 - [ ] **Parity exceptions made explicit**: any caveat that affects comparability
       is documented in the spec, plan, tasks, and operator-facing docs.
-- [ ] **Minimal v1 scope preserved**: exactly four providers, sequential
+- [ ] **Minimal v1 scope preserved**: exactly five providers, sequential
       execution, fixed payload catalog, unauthenticated endpoints, and no new
       benchmark services or experiments unless justified in Complexity
       Tracking.

@@ -22,8 +22,8 @@
 
 ## v1 Guardrails (Keep Visible During Implementation)
 
-- Exactly four providers only: GCP Cloud Run, AWS Lambda, Azure Container Apps, Scaleway Serverless Containers
-- One shared `.NET 8` benchmark app plus one thin AWS Lambda host shim
+- Exactly five providers only: GCP Cloud Run, AWS Lambda, Azure Container Apps, Scaleway Serverless Containers, Unikraft/KraftCloud
+- One shared `.NET 10` benchmark app plus one thin AWS Lambda host shim
 - One shared runner in `src/BenchmarkRunner/`
 - Sequential execution only in v1; no parallel request dispatch
 - Enforce the same 15-minute idle window before every `intent: cold` step
@@ -36,11 +36,11 @@
 
 **Purpose**: Scaffold the nearly empty repository into the planned .NET solution and test layout.
 
-- [ ] T001 Create the root solution and pin .NET SDK `8.0.408` in `cold-start-perf-comparison.sln` and `global.json`
-- [ ] T002 [P] Scaffold production projects in `src/Benchmark.Contracts/Benchmark.Contracts.csproj`, `src/BenchmarkApp/BenchmarkApp.csproj`, `src/BenchmarkRunner/BenchmarkRunner.csproj`, and `src/BenchmarkApp.AwsLambdaHost/BenchmarkApp.AwsLambdaHost.csproj`
-- [ ] T003 [P] Scaffold xUnit test projects in `tests/contract/Benchmark.ContractTests/Benchmark.ContractTests.csproj`, `tests/integration/Benchmark.IntegrationTests/Benchmark.IntegrationTests.csproj`, and `tests/unit/Benchmark.UnitTests/Benchmark.UnitTests.csproj`
-- [ ] T004 [P] Add centralized package and build configuration in `Directory.Build.props` and `Directory.Packages.props`
-- [ ] T005 [P] Add repository defaults for .NET outputs and benchmark artifacts in `.gitignore` and `.editorconfig`
+- [X] T001 Create the root solution and pin .NET SDK `10.0.201` in `cold-start-perf-comparison.sln` and `global.json`
+- [X] T002 [P] Scaffold production projects in `src/Benchmark.Contracts/Benchmark.Contracts.csproj`, `src/BenchmarkApp/BenchmarkApp.csproj`, `src/BenchmarkRunner/BenchmarkRunner.csproj`, and `src/BenchmarkApp.AwsLambdaHost/BenchmarkApp.AwsLambdaHost.csproj`
+- [X] T003 [P] Scaffold xUnit test projects in `tests/contract/Benchmark.ContractTests/Benchmark.ContractTests.csproj`, `tests/integration/Benchmark.IntegrationTests/Benchmark.IntegrationTests.csproj`, and `tests/unit/Benchmark.UnitTests/Benchmark.UnitTests.csproj`
+- [X] T004 [P] Add centralized package and build configuration in `Directory.Build.props` and `Directory.Packages.props`
+- [X] T005 [P] Add repository defaults for .NET outputs and benchmark artifacts in `.gitignore` and `.editorconfig`
 
 ---
 
@@ -50,10 +50,10 @@
 
 **⚠️ CRITICAL**: No user story work should start before this phase is complete.
 
-- [ ] T006 Create shared benchmark domain models in `src/Benchmark.Contracts/Providers/ProviderDeployment.cs`, `src/Benchmark.Contracts/Workloads/PayloadDefinition.cs`, `src/Benchmark.Contracts/Workloads/WorkloadDefinition.cs`, `src/Benchmark.Contracts/Workloads/WorkloadStep.cs`, `src/Benchmark.Contracts/Results/BenchmarkRun.cs`, `src/Benchmark.Contracts/Results/ResultRecord.cs`, `src/Benchmark.Contracts/Results/ParityException.cs`, and `src/Benchmark.Contracts/Results/SummaryMetric.cs`
-- [ ] T007 [P] Implement workload and results schema validation helpers in `src/Benchmark.Contracts/Validation/WorkloadSchemaValidator.cs` and `src/Benchmark.Contracts/Validation/ResultsSchemaValidator.cs`, including custom checks for unique `stepId` values, contiguous `sequence` numbering, and the exact two-entry payload catalog
-- [ ] T008 [P] Add provider target configuration types in `src/BenchmarkRunner/Configuration/ProviderTargetOptions.cs` and `src/BenchmarkRunner/Configuration/ProviderTargetCatalog.cs`
-- [ ] T009 [P] Add deterministic matrix payload utilities in `src/Benchmark.Contracts/Payloads/MatrixPayloadFactory.cs` and `src/Benchmark.Contracts/Payloads/MatrixHashCalculator.cs`
+- [X] T006 Create shared benchmark domain models in `src/Benchmark.Contracts/Providers/ProviderDeployment.cs`, `src/Benchmark.Contracts/Workloads/PayloadDefinition.cs`, `src/Benchmark.Contracts/Workloads/WorkloadDefinition.cs`, `src/Benchmark.Contracts/Workloads/WorkloadStep.cs`, `src/Benchmark.Contracts/Results/BenchmarkRun.cs`, `src/Benchmark.Contracts/Results/ResultRecord.cs`, `src/Benchmark.Contracts/Results/ParityException.cs`, and `src/Benchmark.Contracts/Results/SummaryMetric.cs`
+- [X] T007 [P] Implement workload and results schema validation helpers in `src/Benchmark.Contracts/Validation/WorkloadSchemaValidator.cs` and `src/Benchmark.Contracts/Validation/ResultsSchemaValidator.cs`, including custom checks for unique `stepId` values, contiguous `sequence` numbering, and the exact two-entry payload catalog
+- [X] T008 [P] Add provider target configuration types in `src/BenchmarkRunner/Configuration/ProviderTargetOptions.cs` and `src/BenchmarkRunner/Configuration/ProviderTargetCatalog.cs`
+- [X] T009 [P] Add deterministic matrix payload utilities in `src/Benchmark.Contracts/Payloads/MatrixPayloadFactory.cs` and `src/Benchmark.Contracts/Payloads/MatrixHashCalculator.cs`
 
 **Checkpoint**: Shared contracts, payload helpers, and runner configuration primitives are ready for story work.
 
@@ -67,18 +67,18 @@
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Add API contract tests for `GET /api/startup` and `POST /api/compute/matrix` against `specs/001-cross-cloud-benchmark/contracts/benchmark-app.openapi.yaml` in `tests/contract/Benchmark.ContractTests/BenchmarkAppOpenApiContractTests.cs`
-- [ ] T011 [P] [US1] Add workload and results schema contract tests for `workloads/v1/cross-cloud-sequential.json`, `specs/001-cross-cloud-benchmark/contracts/workload.schema.json`, and `specs/001-cross-cloud-benchmark/contracts/results.schema.json` in `tests/contract/Benchmark.ContractTests/BenchmarkSchemasContractTests.cs`, including assertions for at least one cold step and one warm step
-- [ ] T012 [P] [US1] Add sequential runner integration coverage for ordered step execution and record emission in `tests/integration/Benchmark.IntegrationTests/SequentialWorkloadExecutorIntegrationTests.cs`
+- [X] T010 [P] [US1] Add API contract tests for `GET /api/startup` and `POST /api/compute/matrix` against `specs/001-cross-cloud-benchmark/contracts/benchmark-app.openapi.yaml` in `tests/contract/Benchmark.ContractTests/BenchmarkAppOpenApiContractTests.cs`
+- [X] T011 [P] [US1] Add workload and results schema contract tests for `workloads/v1/cross-cloud-sequential.json`, `specs/001-cross-cloud-benchmark/contracts/workload.schema.json`, and `specs/001-cross-cloud-benchmark/contracts/results.schema.json` in `tests/contract/Benchmark.ContractTests/BenchmarkSchemasContractTests.cs`, including assertions for at least one cold step and one warm step
+- [X] T012 [P] [US1] Add sequential runner integration coverage for ordered step execution and record emission in `tests/integration/Benchmark.IntegrationTests/SequentialWorkloadExecutorIntegrationTests.cs`
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Implement the shared benchmark host and startup probe route in `src/BenchmarkApp/Program.cs` and `src/BenchmarkApp/Endpoints/StartupEndpoint.cs`
-- [ ] T014 [P] [US1] Implement run metadata and raw result-envelope assembly in `src/BenchmarkRunner/Program.cs` and `src/BenchmarkRunner/Services/RunEnvelopeBuilder.cs`, including workload version, benchmark app contract version, and result schema version capture
-- [ ] T015 [P] [US1] Add workload loading and workload hash capture in `src/BenchmarkRunner/Services/WorkloadFileLoader.cs` and `src/BenchmarkRunner/Services/WorkloadHashService.cs`
-- [ ] T016 [US1] Author the schema-valid sequential v1 workload artifact with the fixed two-entry payload catalog and explicit cold/warm step order in `workloads/v1/cross-cloud-sequential.json`
-- [ ] T017 [US1] Implement single-request sequential dispatch with shared path targeting in `src/BenchmarkRunner/Services/SequentialWorkloadExecutor.cs`
-- [ ] T018 [US1] Write normalized result envelopes as structured JSON output in `src/BenchmarkRunner/Services/ResultEnvelopeWriter.cs`
+- [X] T013 [US1] Implement the shared benchmark host and startup probe route in `src/BenchmarkApp/Program.cs` and `src/BenchmarkApp/Endpoints/StartupEndpoint.cs`
+- [X] T014 [P] [US1] Implement run metadata and raw result-envelope assembly in `src/BenchmarkRunner/Program.cs` and `src/BenchmarkRunner/Services/RunEnvelopeBuilder.cs`, including workload version, benchmark app contract version, and result schema version capture
+- [X] T015 [P] [US1] Add workload loading and workload hash capture in `src/BenchmarkRunner/Services/WorkloadFileLoader.cs` and `src/BenchmarkRunner/Services/WorkloadHashService.cs`
+- [X] T016 [US1] Author the schema-valid sequential v1 workload artifact with the fixed two-entry payload catalog and explicit cold/warm step order in `workloads/v1/cross-cloud-sequential.json`
+- [X] T017 [US1] Implement single-request sequential dispatch with shared path targeting in `src/BenchmarkRunner/Services/SequentialWorkloadExecutor.cs`
+- [X] T018 [US1] Write normalized result envelopes as structured JSON output in `src/BenchmarkRunner/Services/ResultEnvelopeWriter.cs`
 
 **Checkpoint**: User Story 1 produces reproducible ordered runs and normalized raw result records without introducing concurrency.
 
@@ -92,15 +92,15 @@
 
 ### Tests for User Story 2
 
-- [ ] T019 [P] [US2] Add integration tests for the fixed 15-minute idle window and cold-step confirmation flow in `tests/integration/Benchmark.IntegrationTests/ColdStartIdleWindowIntegrationTests.cs`
-- [ ] T020 [P] [US2] Add unit tests for provider evidence evaluation and parity exception mapping in `tests/unit/Benchmark.UnitTests/ScaleEvidenceServiceImplementationsTests.cs`
+- [X] T019 [P] [US2] Add integration tests for the fixed 15-minute idle window and cold-step confirmation flow in `tests/integration/Benchmark.IntegrationTests/ColdStartIdleWindowIntegrationTests.cs`
+- [X] T020 [P] [US2] Add unit tests for provider evidence evaluation and parity exception mapping in `tests/unit/Benchmark.UnitTests/ScaleEvidenceServiceImplementationsTests.cs`
 
 ### Implementation for User Story 2
 
-- [ ] T021 [US2] Implement the fixed v1 cold-step idle coordinator in `src/BenchmarkRunner/Services/ColdStartIdleWindowCoordinator.cs`
-- [ ] T022 [P] [US2] Implement provider zero-state evidence services in `src/BenchmarkRunner/Services/ScaleEvidence/IProviderScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/CloudRunScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/AzureContainerAppsScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/ScalewayScaleEvidenceService.cs`, and `src/BenchmarkRunner/Services/ScaleEvidence/AwsLambdaScaleEvidenceService.cs`
-- [ ] T023 [US2] Integrate cold-step confirmation and parity exception recording into `src/BenchmarkRunner/Services/SequentialWorkloadExecutor.cs` and `src/BenchmarkRunner/Services/ParityExceptionRecorder.cs`
-- [ ] T024 [US2] Capture per-provider cold-start policy metadata, canonical regions, disabled warm-start optimizations, and benchmark resource settings in `deploy/gcp-cloud-run/descriptor.yaml`, `deploy/aws-lambda/descriptor.yaml`, `deploy/azure-container-apps/descriptor.yaml`, and `deploy/scaleway-serverless/descriptor.yaml` using GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, and Scaleway=`fr-par`
+- [X] T021 [US2] Implement the fixed v1 cold-step idle coordinator in `src/BenchmarkRunner/Services/ColdStartIdleWindowCoordinator.cs`
+- [X] T022 [P] [US2] Implement provider zero-state evidence services in `src/BenchmarkRunner/Services/ScaleEvidence/IProviderScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/CloudRunScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/AzureContainerAppsScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/ScalewayScaleEvidenceService.cs`, `src/BenchmarkRunner/Services/ScaleEvidence/AwsLambdaScaleEvidenceService.cs`, and `src/BenchmarkRunner/Services/ScaleEvidence/UnikraftKraftCloudScaleEvidenceService.cs`
+- [X] T023 [US2] Integrate cold-step confirmation and parity exception recording into `src/BenchmarkRunner/Services/SequentialWorkloadExecutor.cs` and `src/BenchmarkRunner/Services/ParityExceptionRecorder.cs`
+- [X] T024 [US2] Capture per-provider cold-start policy metadata, canonical regions, disabled warm-start optimizations, and benchmark resource settings in `deploy/gcp-cloud-run/descriptor.yaml`, `deploy/aws-lambda/descriptor.yaml`, `deploy/azure-container-apps/descriptor.yaml`, `deploy/scaleway-serverless/descriptor.yaml`, and `deploy/unikraft-kraftcloud/descriptor.yaml` using GCP=`europe-west1`, AWS=`eu-west-1`, Azure=`westeurope`, Scaleway=`fr-par`, and Unikraft=`fra`
 
 **Checkpoint**: User Story 2 makes cold-start intent trustworthy and transparent even when a platform cannot expose deterministic scale-to-zero evidence.
 
@@ -114,17 +114,17 @@
 
 ### Tests for User Story 3
 
-- [ ] T025 [P] [US3] Add unit tests for matrix multiplication correctness and payload guards in `tests/unit/Benchmark.UnitTests/MatrixComputeServiceTests.cs`
-- [ ] T026 [P] [US3] Add integration tests for warm compute success, malformed payload handling, and run continuation in `tests/integration/Benchmark.IntegrationTests/ComputeProbeIntegrationTests.cs`
+- [X] T025 [P] [US3] Add unit tests for matrix multiplication correctness and payload guards in `tests/unit/Benchmark.UnitTests/MatrixComputeServiceTests.cs`
+- [X] T026 [P] [US3] Add integration tests for warm compute success, malformed payload handling, and run continuation in `tests/integration/Benchmark.IntegrationTests/ComputeProbeIntegrationTests.cs`
 
 ### Implementation for User Story 3
 
-- [ ] T027 [US3] Implement the compute endpoint and matrix multiplication service in `src/BenchmarkApp/Endpoints/MatrixComputeEndpoint.cs` and `src/BenchmarkApp/Services/MatrixComputeService.cs`
-- [ ] T028 [P] [US3] Implement fixed-payload request validation and response DTO mapping in `src/BenchmarkApp/Validation/MatrixComputeRequestValidator.cs` and `src/BenchmarkApp/Models/MatrixComputeContracts.cs`
-- [ ] T029 [US3] Finalize deterministic matrix contents and content hashes in the existing `workloads/v1/cross-cloud-sequential.json` payload catalog for `matrix-100x100` and `matrix-200x200`, then re-run the contract/schema validation from `T011`
-- [ ] T030 [US3] Implement warm-step compute execution and correctness verification in `src/BenchmarkRunner/Services/ComputeStepExecutor.cs` and `src/BenchmarkRunner/Services/MatrixResultVerifier.cs`
-- [ ] T031 [US3] Compute per-provider and per-intent `p50`, `p95`, `p99`, `min`, and `max` summaries in `src/BenchmarkRunner/Services/SummaryMetricCalculator.cs` and `src/BenchmarkRunner/Services/RunEnvelopeBuilder.cs`
-- [ ] T032 [US3] Capture compute response bodies, correctness state, and non-fatal error continuation rules in `src/BenchmarkRunner/Services/ResultRecordFactory.cs` and `src/BenchmarkRunner/Services/RunFailurePolicy.cs`
+- [X] T027 [US3] Implement the compute endpoint and matrix multiplication service in `src/BenchmarkApp/Endpoints/MatrixComputeEndpoint.cs` and `src/BenchmarkApp/Services/MatrixComputeService.cs`
+- [X] T028 [P] [US3] Implement fixed-payload request validation and response DTO mapping in `src/BenchmarkApp/Validation/MatrixComputeRequestValidator.cs` and `src/BenchmarkApp/Models/MatrixComputeContracts.cs`
+- [X] T029 [US3] Finalize deterministic matrix contents and content hashes in the existing `workloads/v1/cross-cloud-sequential.json` payload catalog for `matrix-100x100` and `matrix-200x200`, then re-run the contract/schema validation from `T011`
+- [X] T030 [US3] Implement warm-step compute execution and correctness verification in `src/BenchmarkRunner/Services/ComputeStepExecutor.cs` and `src/BenchmarkRunner/Services/MatrixResultVerifier.cs`
+- [X] T031 [US3] Compute per-provider and per-intent `p50`, `p95`, `p99`, `min`, and `max` summaries in `src/BenchmarkRunner/Services/SummaryMetricCalculator.cs` and `src/BenchmarkRunner/Services/RunEnvelopeBuilder.cs`
+- [X] T032 [US3] Capture compute response bodies, correctness state, and non-fatal error continuation rules in `src/BenchmarkRunner/Services/ResultRecordFactory.cs` and `src/BenchmarkRunner/Services/RunFailurePolicy.cs`
 
 **Checkpoint**: User Story 3 adds comparable warm-compute measurements and summary metrics while preserving sequential v1 execution.
 
@@ -138,15 +138,15 @@
 
 ### Tests for User Story 4
 
-- [ ] T033 [P] [US4] Add documentation smoke tests for single-provider deployment and runner execution steps in `tests/integration/Benchmark.IntegrationTests/QuickstartSmokeTests.cs`
-- [ ] T034 [P] [US4] Add provider descriptor validation tests for the `deploy/` manifests in `tests/contract/Benchmark.ContractTests/ProviderDescriptorContractTests.cs`
+- [X] T033 [P] [US4] Add documentation smoke tests for single-provider deployment and runner execution steps in `tests/integration/Benchmark.IntegrationTests/QuickstartSmokeTests.cs`
+- [X] T034 [P] [US4] Add provider descriptor validation tests for the `deploy/` manifests in `tests/contract/Benchmark.ContractTests/ProviderDescriptorContractTests.cs`
 
 ### Implementation for User Story 4
 
-- [ ] T035 [US4] Add the thin AWS Lambda host shim over the shared app in `src/BenchmarkApp.AwsLambdaHost/Program.cs` and `src/BenchmarkApp.AwsLambdaHost/LambdaEntryPoint.cs`
-- [ ] T036 [P] [US4] Create GCP Cloud Run and Azure Container Apps native deployment manifests plus operator notes alongside the benchmark descriptors in `deploy/gcp-cloud-run/service.yaml`, `deploy/gcp-cloud-run/README.md`, `deploy/azure-container-apps/containerapp.yaml`, and `deploy/azure-container-apps/README.md`
-- [ ] T037 [P] [US4] Create AWS Lambda and Scaleway native deployment manifests plus operator notes alongside the benchmark descriptors in `deploy/aws-lambda/template.yaml`, `deploy/aws-lambda/README.md`, `deploy/scaleway-serverless/container.yaml`, and `deploy/scaleway-serverless/README.md`
-- [ ] T038 [US4] Document the canonical provider regions, runtime/toolchain pin (`8.0.14` / `8.0.408`), disabled warm-start optimizations, resource settings, deployment steps, and end-to-end run instructions in `README.md` and `specs/001-cross-cloud-benchmark/quickstart.md`
+- [X] T035 [US4] Add the thin AWS Lambda host shim over the shared app in `src/BenchmarkApp.AwsLambdaHost/Program.cs` and `src/BenchmarkApp.AwsLambdaHost/LambdaEntryPoint.cs`
+- [X] T036 [P] [US4] Create GCP Cloud Run and Azure Container Apps native deployment manifests plus operator notes alongside the benchmark descriptors in `deploy/gcp-cloud-run/service.yaml`, `deploy/gcp-cloud-run/README.md`, `deploy/azure-container-apps/containerapp.yaml`, and `deploy/azure-container-apps/README.md`
+- [X] T037 [P] [US4] Create AWS Lambda, Scaleway, and Unikraft/KraftCloud deployment assets plus operator notes alongside the benchmark descriptors in `deploy/aws-lambda/template.yaml`, `deploy/aws-lambda/README.md`, `deploy/scaleway-serverless/container.yaml`, `deploy/scaleway-serverless/README.md`, and `deploy/unikraft-kraftcloud/README.md`
+- [X] T038 [US4] Document the canonical provider regions, runtime/toolchain pin (`10.0.5` / `10.0.201`), disabled warm-start optimizations, resource settings, deployment steps, and end-to-end run instructions in `README.md` and `specs/001-cross-cloud-benchmark/quickstart.md`
 
 **Checkpoint**: User Story 4 makes the benchmark reproducible from repository documentation and deployment assets alone.
 
@@ -156,9 +156,9 @@
 
 **Purpose**: Finalize cross-story configuration, validation wiring, and v1 guardrail documentation.
 
-- [ ] T039 [P] Update benchmark configuration examples and output-path guidance in `src/BenchmarkRunner/appsettings.json` and `README.md`
-- [ ] T040 [P] Add final cross-project test wiring and execution guidance in `tests/contract/Benchmark.ContractTests/Benchmark.ContractTests.csproj`, `tests/integration/Benchmark.IntegrationTests/Benchmark.IntegrationTests.csproj`, `tests/unit/Benchmark.UnitTests/Benchmark.UnitTests.csproj`, and `README.md`
-- [ ] T041 Validate v1 guardrail, parity-caveat, warm-start-disablement, and resource-setting language in `README.md`, `deploy/gcp-cloud-run/README.md`, `deploy/aws-lambda/README.md`, `deploy/azure-container-apps/README.md`, and `deploy/scaleway-serverless/README.md`
+- [X] T039 [P] Update benchmark configuration examples and output-path guidance in `src/BenchmarkRunner/appsettings.json` and `README.md`
+- [X] T040 [P] Add final cross-project test wiring and execution guidance in `tests/contract/Benchmark.ContractTests/Benchmark.ContractTests.csproj`, `tests/integration/Benchmark.IntegrationTests/Benchmark.IntegrationTests.csproj`, `tests/unit/Benchmark.UnitTests/Benchmark.UnitTests.csproj`, and `README.md`
+- [X] T041 Validate v1 guardrail, parity-caveat, warm-start-disablement, and resource-setting language in `README.md`, `deploy/gcp-cloud-run/README.md`, `deploy/aws-lambda/README.md`, `deploy/azure-container-apps/README.md`, `deploy/scaleway-serverless/README.md`, and `deploy/unikraft-kraftcloud/README.md`
 
 ---
 

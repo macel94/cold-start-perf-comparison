@@ -4,7 +4,7 @@ Auto-generated from all feature plans. Last updated: 2026-04-14
 
 ## Active Technologies
 
-- C# / .NET 8 LTS for app, hosting adapters, and runner + ASP.NET Core Minimal API, System.Text.Json, HttpClient, xUnit, FluentAssertions, Amazon.Lambda.AspNetCoreServer (AWS host adapter only), provider CLI/API integrations for deployment-state checks (001-cross-cloud-benchmark)
+- C# / .NET 10 for app, hosting adapters, and runner + ASP.NET Core Minimal API, System.Text.Json, HttpClient, xUnit, FluentAssertions, Amazon.Lambda.AspNetCoreServer (AWS host adapter only), provider CLI/API integrations for deployment-state checks (001-cross-cloud-benchmark)
 
 ## Project Structure
 
@@ -21,11 +21,11 @@ tests/
 
 ## Code Style
 
-C# / .NET 8 LTS for app, hosting adapters, and runner: Follow standard conventions
+C# / .NET 10 for app, hosting adapters, and runner: Follow standard conventions
 
 ## Recent Changes
 
-- 001-cross-cloud-benchmark: Added C# / .NET 8 LTS for app, hosting adapters, and runner + ASP.NET Core Minimal API, System.Text.Json, HttpClient, xUnit, FluentAssertions, Amazon.Lambda.AspNetCoreServer (AWS host adapter only), provider CLI/API integrations for deployment-state checks
+- 001-cross-cloud-benchmark: Added C# / .NET 10 for app, hosting adapters, and runner + ASP.NET Core Minimal API, System.Text.Json, HttpClient, xUnit, FluentAssertions, Amazon.Lambda.AspNetCoreServer (AWS host adapter only), provider CLI/API integrations for deployment-state checks
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

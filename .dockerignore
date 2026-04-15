@@ -1,0 +1,10 @@
+bin/
+obj/
+.git/
+.gitignore
+.dockerignore
+node_modules/
+coverage/
+benchmark-results/
+*.log*
+.env*
