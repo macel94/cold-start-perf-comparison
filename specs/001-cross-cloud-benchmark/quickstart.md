@@ -54,7 +54,7 @@ This quickstart is the operator-facing path for deploying one provider and runni
     - Azure `minReplicas` must be `0`
     - AWS provisioned concurrency must remain disabled
     - Scaleway keep-warm settings must remain disabled
-    - Unikraft/KraftCloud `--scale-to-zero policy=on` may be enabled, but stateful snapshots must remain disabled
+    - Unikraft/KraftCloud documents scale-to-zero by default; stateful snapshots must remain disabled for baseline parity
 
 4. **Deploy the benchmark app**
 

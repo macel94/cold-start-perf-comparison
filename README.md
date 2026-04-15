@@ -94,7 +94,7 @@ Each folder contains:
 - Keep the runtime/toolchain pins unchanged when collecting benchmark data
 - Record provider descriptor changes before publishing results
 - AWS Lambda cold-start intent is inferred after the same 15-minute idle window and is always annotated with a parity exception in v1
-- Unikraft/KraftCloud should use the documented `.NET 10` HTTP server workflow and `--scale-to-zero policy=on`, while leaving stateful snapshotting disabled for baseline parity
+- Unikraft/KraftCloud should use the documented `.NET 10` HTTP server workflow (`unikraft run --metro=fra -p 443:8080/tls+http -m 512M ...`), while leaving stateful snapshotting disabled for baseline parity; KraftCloud documents scale-to-zero support and enables it by default
 
 ## Quickstart
 
