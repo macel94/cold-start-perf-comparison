@@ -35,6 +35,7 @@ tests/
 
 - .NET SDK pin: `10.0.201` (roll-forward allowed within feature band)
 - Runtime baseline: ASP.NET Core `10.0.5`
+- Terraform baseline: `>= 1.7`
 
 ## Build and test
 
@@ -71,7 +72,7 @@ Each output envelope records:
 - parity exceptions
 - `p50`, `p95`, `p99`, `min`, and `max` summaries per provider and intent
 
-## Provider deployment notes
+## Terraform deployment notes
 
 - GCP Cloud Run: `deploy/gcp-cloud-run/`
 - AWS Lambda: `deploy/aws-lambda/`
@@ -82,8 +83,16 @@ Each output envelope records:
 Each folder contains:
 
 - `descriptor.yaml` with canonical region, runtime pin, idle policy, resource settings, and parity notes
-- provider-native deployment asset or command recipe
-- provider-specific README with operator steps
+- `versions.tf`, `variables.tf`, `main.tf`, and `outputs.tf` for the provider Terraform stack
+- `terraform.tfvars.example` showing the required deployment inputs
+- a provider-specific README with `terraform init`, `plan`, `apply`, and output steps
+
+Shared deployment conventions:
+
+- Container-based providers accept an `image` variable for the shared benchmark app image
+- AWS Lambda packages the thin Lambda shim from `src/BenchmarkApp.AwsLambdaHost/bin/Release/net10.0/publish`
+- Warm-start optimization settings remain disabled in Terraform defaults for every provider
+- Terraform outputs return the provider base URL you should copy into `src/BenchmarkRunner/appsettings.json` or equivalent environment-managed config
 
 ## Workload artifact
 
@@ -94,7 +103,7 @@ Each folder contains:
 - Keep the runtime/toolchain pins unchanged when collecting benchmark data
 - Record provider descriptor changes before publishing results
 - AWS Lambda cold-start intent is inferred after the same 15-minute idle window and is always annotated with a parity exception in v1
-- Unikraft/KraftCloud should use the documented `.NET 10` HTTP server workflow (`unikraft run --metro=fra -p 443:8080/tls+http -m 512M ...`), while leaving stateful snapshotting disabled for baseline parity; KraftCloud documents scale-to-zero support and enables it by default
+- Unikraft/KraftCloud should use the documented `.NET 10` HTTP server workflow before Terraform apply, while leaving stateful snapshotting disabled for baseline parity; KraftCloud documents scale-to-zero support and enables it by default
 
 ## Quickstart
 

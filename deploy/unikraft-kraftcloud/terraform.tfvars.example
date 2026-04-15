@@ -1,0 +1,4 @@
+instance_name = "benchmark-app"
+metro         = "fra"
+image         = "your-org.kraft.cloud/benchmark/benchmark-app:latest"
+memory_mb     = 512

@@ -1,0 +1,5 @@
+resource_group_name            = "rg-benchmark"
+container_app_environment_name = "aca-benchmark"
+log_analytics_workspace_name   = "law-benchmark"
+container_app_name             = "benchmark-app"
+image                          = "ghcr.io/your-org/cold-start-perf-comparison:latest"
