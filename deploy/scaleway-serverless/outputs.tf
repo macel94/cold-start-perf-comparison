@@ -5,5 +5,5 @@ output "container_name" {
 
 output "service_url" {
   description = "Public base URL for the benchmark app."
-  value       = scaleway_container.benchmark.domain_name
+  value       = "https://${scaleway_container.benchmark.domain_name}"
 }
