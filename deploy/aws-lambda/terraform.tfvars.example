@@ -1,0 +1,4 @@
+function_name             = "benchmark-app"
+package_source_directory  = "../../src/BenchmarkApp.AwsLambdaHost/bin/Release/net10.0/publish"
+memory_size_mb            = 1024
+timeout_seconds           = 30

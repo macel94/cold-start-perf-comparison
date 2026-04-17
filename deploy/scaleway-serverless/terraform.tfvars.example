@@ -1,0 +1,4 @@
+project_id     = "your-scaleway-project-id"
+namespace_name = "benchmark"
+container_name = "benchmark-app"
+image          = "rg.fr-par.scw.cloud/your-namespace/cold-start-perf-comparison:latest"

@@ -8,6 +8,7 @@ This quickstart is the operator-facing path for deploying one provider and runni
 
 - Root README: `/README.md`
 - Provider descriptors in `/deploy/*/descriptor.yaml`
+- Provider Terraform stacks in `/deploy/*/{versions.tf,variables.tf,main.tf,outputs.tf}`
 - Workload artifact: `/workloads/v1/cross-cloud-sequential.json`
 - Contracts:
   - `/specs/001-cross-cloud-benchmark/contracts/benchmark-app.openapi.yaml`
@@ -50,26 +51,42 @@ This quickstart is the operator-facing path for deploying one provider and runni
 
 3. **Keep warm-start optimization disabled**
 
-    - Cloud Run `minScale` must be `0`
+    - Cloud Run `minInstanceCount` must be `0`
     - Azure `minReplicas` must be `0`
     - AWS provisioned concurrency must remain disabled
     - Scaleway keep-warm settings must remain disabled
     - Unikraft/KraftCloud documents scale-to-zero by default; stateful snapshots must remain disabled for baseline parity
 
-4. **Deploy the benchmark app**
+4. **Prepare the deployment input**
 
-   Follow the provider README in the matching `deploy/` directory and keep:
+   - For GCP, Azure, and Scaleway: publish the shared benchmark app image and set the `image` variable in the chosen provider's `terraform.tfvars`
+   - For AWS Lambda: run `dotnet publish src/BenchmarkApp.AwsLambdaHost/BenchmarkApp.AwsLambdaHost.csproj -c Release`
+   - For Unikraft/KraftCloud: build and publish the benchmark image from the official `.NET 10` HTTP server workflow, then set the `image` variable
 
-   - region fixed to the descriptor value
-   - runtime fixed to `10.0.5`
-   - startup path fixed to `GET /api/startup`
-   - compute path fixed to `POST /api/compute/matrix`
+5. **Deploy with Terraform**
 
-5. **Update the provider base URL**
+   ```bash
+   cp deploy/gcp-cloud-run/terraform.tfvars.example deploy/gcp-cloud-run/terraform.tfvars
+   terraform -chdir=deploy/gcp-cloud-run init
+   terraform -chdir=deploy/gcp-cloud-run plan -out tfplan
+   terraform -chdir=deploy/gcp-cloud-run apply tfplan
+   ```
+
+   Swap `deploy/gcp-cloud-run` for the provider you chose in step 2 and edit `terraform.tfvars` before `plan`.
+
+6. **Capture the deployed base URL**
+
+   ```bash
+   terraform -chdir=deploy/gcp-cloud-run output -raw service_url
+   ```
+
+   AWS Lambda exposes `api_base_url`; the other providers expose `service_url`.
+
+7. **Update the provider base URL**
 
    Set the deployed provider URL in `src/BenchmarkRunner/appsettings.json` for the target provider or override via environment-managed config.
 
-6. **Run one benchmark session**
+8. **Run one benchmark session**
 
    ```bash
    dotnet run --project src/BenchmarkRunner -- \
@@ -79,7 +96,7 @@ This quickstart is the operator-facing path for deploying one provider and runni
      --network-location-label workstation-eu
    ```
 
-7. **Validate the result envelope**
+9. **Validate the result envelope**
 
    Confirm the output JSON contains:
 
@@ -91,13 +108,13 @@ This quickstart is the operator-facing path for deploying one provider and runni
    - `parityExceptions`
    - `summaryMetrics`
 
-8. **Check cold-step parity**
+10. **Check cold-step parity**
 
-   For every `intent: cold` record:
+    For every `intent: cold` record:
 
-   - `scaleToZeroConfirmed` must exist
-   - if it is `false`, `annotationRefs` must reference a parity exception
-   - AWS Lambda is expected to produce a parity exception in v1
+    - `scaleToZeroConfirmed` must exist
+    - if it is `false`, `annotationRefs` must reference a parity exception
+    - AWS Lambda is expected to produce a parity exception in v1
 
 ## Expected output checklist
 

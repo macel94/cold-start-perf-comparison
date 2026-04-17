@@ -14,6 +14,15 @@ publish/
 # Benchmark outputs
 benchmark-results/
 
+# Terraform
+.terraform/
+.terraform-artifacts/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+deploy/aws-lambda/*.zip
+
 # Workstation/editor
 .DS_Store
 Thumbs.db

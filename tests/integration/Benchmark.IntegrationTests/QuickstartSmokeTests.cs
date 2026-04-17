@@ -11,8 +11,9 @@ public sealed class QuickstartSmokeTests
         var quickstart = File.ReadAllText(Path.Combine(RepoRoot, "specs", "001-cross-cloud-benchmark", "quickstart.md"));
 
         Assert.Contains("dotnet test cold-start-perf-comparison.sln", readme);
-        Assert.Contains("dotnet run --project src/BenchmarkRunner", readme);
-        Assert.Contains("deploy/gcp-cloud-run", quickstart);
+        Assert.Contains("terraform -chdir=deploy/gcp-cloud-run init", quickstart);
+        Assert.Contains("terraform -chdir=deploy/gcp-cloud-run apply tfplan", quickstart);
+        Assert.Contains("terraform -chdir=deploy/gcp-cloud-run output -raw service_url", quickstart);
         Assert.Contains("deploy/unikraft-kraftcloud", quickstart);
         Assert.Contains("benchmark-results", quickstart);
     }

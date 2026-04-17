@@ -20,4 +20,21 @@ public sealed class ProviderDescriptorContractTests
         Assert.Contains("computePath: /api/compute/matrix", descriptor);
         Assert.Contains("idleWindowMinutes: 15", descriptor);
     }
+
+    [Theory]
+    [InlineData("gcp-cloud-run")]
+    [InlineData("aws-lambda")]
+    [InlineData("azure-container-apps")]
+    [InlineData("scaleway-serverless")]
+    [InlineData("unikraft-kraftcloud")]
+    public void Provider_folder_contains_the_expected_terraform_assets(string folder)
+    {
+        var deployFolder = Path.Combine(RepoRoot, "deploy", folder);
+
+        Assert.True(File.Exists(Path.Combine(deployFolder, "versions.tf")));
+        Assert.True(File.Exists(Path.Combine(deployFolder, "variables.tf")));
+        Assert.True(File.Exists(Path.Combine(deployFolder, "main.tf")));
+        Assert.True(File.Exists(Path.Combine(deployFolder, "outputs.tf")));
+        Assert.True(File.Exists(Path.Combine(deployFolder, "terraform.tfvars.example")));
+    }
 }
